@@ -1,0 +1,272 @@
+{
+    "AWSTemplateFormatVersion" : "2010-09-09",
+    "Description"              : "Cloud Formation stack to create frontend, backend & database security group",
+    "Parameters"               : {
+        "CustomerPrefix" : {
+            "Type" : "String",
+            "Default" : "testcust",
+            "Description" : "Enter Customer Prefix"
+        },
+        "Region"         : {
+            "Type" : "String",
+            "Default" : "us-east-1",
+            "Description" : "Region in which VPC will be launched",
+            "AllowedValues" : [
+                "eu-central-1",
+                "eu-west-1",
+                "eu-west-2",
+                "us-east-1",
+                "us-west-1"
+            ]
+        },
+        "Environment"    : {
+            "Type" : "String",
+            "Default" : "dt",
+            "Description" : "Enter Environment (Input Format - d=development, t=test, a=acceptance, p=production, dt=devtest, ap=acceptanceproduction)",
+            "AllowedValues" : [
+                "d",
+                "t",
+                "a",
+                "p",
+                "dt",
+                "ap"
+            ]
+        },
+        "AZ"             : {
+            "Type" : "String",
+            "Default" : "a",
+            "Description" : "Enter AZ (a,b,c,d,e)",
+            "AllowedValues" : [
+                "a",
+                "b",
+                "c",
+                "d",
+                "e"
+            ]
+        },
+        "Zone"           : {
+            "Type" : "String",
+            "Default" : "ID",
+            "Description" : "Enter Zone (Input Format - I=Internal, E=External, PE=Public Edge, M=Management, ED=External Dev, External Test, ID=Internal Dev, IT=Internal Test, EA=External Acceptance, EP=External Production, IA=Internal Acceptance, IP=Internal Production)",
+            "AllowedValues" : [
+                "I",
+                "E",
+                "PE",
+                "M",
+                "ED",
+                "ET",
+                "ID",
+                "IT",
+                "EA",
+                "EP",
+                "IA",
+                "IP"
+            ]
+        },
+        "VPCID"          : {
+            "Type" : "String",
+            "Default" : "default",
+            "Description" : "Enter VPCID to connect Subnet to"
+        },
+		"AppPrefix"          : {
+            "Type" : "String",
+            "Default" : "default",
+            "Description" : "Enter VPCID to connect Subnet to"
+        }
+    },
+    "Mappings"                 : {
+    },
+    "Resources"                : {
+	"FrontendSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "CustomerPrefix-Environment-Region-AZ-Zone-AppPrefix-Tier",
+        "VpcId": {
+          "Ref": "VPCID"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value" : {
+                            "Fn::Join" : [
+                                "",
+                                [
+                                    {
+                                        "Ref" : "CustomerPrefix"
+                                    },
+                                    "_",
+                                    {
+                                        "Ref" : "Environment"
+                                    },
+                                    "_",
+                                    {
+                                        "Ref" : "Region"
+                                    },
+                                    {
+                                        "Ref" : "AZ"
+                                    },
+                                    "_",
+                                    {
+                                        "Ref" : "Zone"
+                                    },"_",
+									{
+                                        "Ref" : "AppPrefix"
+                                    },
+                                    "_f-sg"
+                                ]
+                            ]
+                        }
+          }
+        ]
+      }
+    },
+	"BackendSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "CustomerPrefix-Environment-Region-AZ-Zone-AppPrefix-Tier",
+        "VpcId": {
+          "Ref": "VPCID"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value" : {
+                            "Fn::Join" : [
+                                "",
+                                [
+                                    {
+                                        "Ref" : "CustomerPrefix"
+                                    },
+                                    "_",
+                                    {
+                                        "Ref" : "Environment"
+                                    },
+                                    "_",
+                                    {
+                                        "Ref" : "Region"
+                                    },
+                                    {
+                                        "Ref" : "AZ"
+                                    },
+                                    "_",
+                                    {
+                                        "Ref" : "Zone"
+                                    },"_",
+									{
+                                        "Ref" : "AppPrefix"
+                                    },
+                                    "_b-sg"
+                                ]
+                            ]
+                        }
+          }
+        ]
+      }
+    },
+	"DatabaseSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "CustomerPrefix-Environment-Region-AZ-Zone-AppPrefix-Tier",
+        "VpcId": {
+          "Ref": "VPCID"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value" : {
+                            "Fn::Join" : [
+                                "",
+                                [
+                                    {
+                                        "Ref" : "CustomerPrefix"
+                                    },
+                                    "_",
+                                    {
+                                        "Ref" : "Environment"
+                                    },
+                                    "_",
+                                    {
+                                        "Ref" : "Region"
+                                    },
+                                    {
+                                        "Ref" : "AZ"
+                                    },
+                                    "_",
+                                    {
+                                        "Ref" : "Zone"
+                                    },"_",
+									{
+                                        "Ref" : "AppPrefix"
+                                    },
+                                    "_d-sg"
+                                ]
+                            ]
+                        }
+          }
+        ]
+      }
+    },
+	"FrontendOutboundRule": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "FrontendSecurityGroup"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+	"FrontendInboundRule": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "FrontendSecurityGroup"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+	"BackendOutboundRule": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "BackendSecurityGroup"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+	"BackendInboundRule": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "BackendSecurityGroup"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+	"DatabaseOutboundRule": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "DatabaseSecurityGroup"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+	"DatabaseInboundRule": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "DatabaseSecurityGroup"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    }
+    },
+    "Outputs"                  : {
+    }
+}

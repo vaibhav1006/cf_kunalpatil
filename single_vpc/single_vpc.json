@@ -293,16 +293,7 @@
         }
     },
     "Outputs": {
-		"EnvironmentVPC":{
-			"Description":"VPC ID",
-			"Value" : {"Ref":"EnvironmentVPC"},
-			"Export":{
-						"Name":{"Fn::Sub":"${CustomerPrefix}-EnvironmentVPC"}
-						 }
-		}
-		
-				
 	
 	
-    }
+   }
 }
