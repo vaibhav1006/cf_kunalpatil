@@ -63,6 +63,11 @@
                 "IP"
             ]
         },
+        "VPCID"          : {
+            "Type" : "String",
+            "Default" : "default",
+            "Description" : "Enter VPCID to connect Subnet to"
+        },
         "CIDR"           : {
             "Type" : "String",
             "Default" : "10.1.0.0/24",
@@ -75,7 +80,9 @@
         "Subnet" : {
             "Type" : "AWS::EC2::Subnet",
             "Properties" : {
-                "VpcId" :{"Fn::ImportValue" : {"Fn::Sub":"${CustomerPrefix}-EnvironmentVPC"}},
+                "VpcId" : {
+                    "Ref" : "VPCID"
+                },
                 "CidrBlock" : {
                     "Ref" : "CIDR"
                 },
@@ -115,7 +122,9 @@
         "SubnetRouteTable" : {
             "Type" : "AWS::EC2::RouteTable",
             "Properties" : {
-               "VpcId" :{"Fn::ImportValue" : {"Fn::Sub":"${CustomerPrefix}-EnvironmentVPC"}},
+                "VpcId" : {
+                    "Ref" : "VPCID"
+                },
                 "Tags"  : [
                     {
                         "Key" : "Name",
@@ -163,7 +172,9 @@
         "NetworkAcl"                  : {
             "Type" : "AWS::EC2::NetworkAcl",
             "Properties" : {
-            "VpcId" :{"Fn::ImportValue" : {"Fn::Sub":"${CustomerPrefix}-EnvironmentVPC"}},
+                "VpcId" : {
+                    "Ref" : "VPCID"
+                },
                 "Tags"  : [
                     {
                         "Key" : "Name",
