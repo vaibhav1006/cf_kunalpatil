@@ -30,7 +30,7 @@ VPCID=$($Command)
 echo "VPC ID : $VPCID"
 
 #Launch Cloudformation template
-aws cloudformation create-stack --stack-name $StackName --template-body file://SingleSubnet.template --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=AZ,ParameterValue=$AZ ParameterKey=Zone,ParameterValue=$Zone ParameterKey=VPCID,ParameterValue=$VPCID ParameterKey=CIDR,ParameterValue=$CIDR --region $Region
+aws cloudformation create-stack --stack-name $StackName --template-body file://single_subnet/SingleSubnet.template --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=AZ,ParameterValue=$AZ ParameterKey=Zone,ParameterValue=$Zone ParameterKey=VPCID,ParameterValue=$VPCID ParameterKey=CIDR,ParameterValue=$CIDR --region $Region
 
 #Wait for Template to complete
 aws cloudformation wait stack-create-complete --stack-name $StackName --region $Region
