@@ -30,8 +30,7 @@ aws cloudformation update-stack --stack-name $StackName --template-body file://s
 else
 #Launch Cloudformation template
 aws cloudformation create-stack --stack-name $StackName --template-body file://SingleVPC.template --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=CIDR,ParameterValue=$CIDR --region $Region
-fi
 #Wait for Template to complete
 aws cloudformation wait stack-create-complete --stack-name $StackName --region $Region
-
+fi
 
