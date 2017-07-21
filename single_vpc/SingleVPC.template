@@ -4,7 +4,7 @@
     "Parameters"               : {
         "CustomerPrefix" : {
             "Type" : "String",
-            "Default" : "testcust",
+            "Default" : "randometest",
             "Description" : "Enter Customer Prefix"
         },
         "Region"         : {

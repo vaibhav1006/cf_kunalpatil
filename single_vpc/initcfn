@@ -21,9 +21,17 @@ CIDR=$4
 
 #Values
 StackName=$CustomerPrefix"-"$Environment"-vpc-cfs"
-
+command1="aws cloudformation describe-stacks --stack-name $StackName  --query Stacks[].StackName --output text"
+stack=$($command1)
+####condition for create or update stack 
+if [ "$stack" = "$StackName" ]; then
+#update cloudformation template
+aws cloudformation update-stack --stack-name $StackName --template-body file://SingleVPC.template --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=CIDR,ParameterValue=$CIDR --region $Region
+else
 #Launch Cloudformation template
-aws cloudformation create-stack --stack-name $StackName --template-body file://single_vpc/SingleVPC.template --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=CIDR,ParameterValue=$CIDR --region $Region
-
+aws cloudformation create-stack --stack-name $StackName --template-body file://SingleVPC.template --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=CIDR,ParameterValue=$CIDR --region $Region
+fi
 #Wait for Template to complete
 aws cloudformation wait stack-create-complete --stack-name $StackName --region $Region
+
+

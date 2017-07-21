@@ -28,9 +28,14 @@ StackName=$CustomerPrefix"-"$Environment"-"$Region$AZ"-"$Zone"-subnet-cfs"
 Command="aws ec2 describe-vpcs --filters Name=tag:Name,Values=$CustomerPrefix"'_'"$Environment-vpc --output text --query Vpcs[*].VpcId --region $Region"
 VPCID=$($Command)
 echo "VPC ID : $VPCID"
-
+command1="aws cloudformation describe-stacks --stack-name $StackName  --query Stacks[].StackName --output text"
+stack=$($command1)
+####condition for create or update stack
+if [ "$stack" = "$StackName" ]; then
 #Launch Cloudformation template
+aws cloudformation update-stack --stack-name $StackName --template-body file://single_subnet/SingleSubnet.template --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=AZ,ParameterValue=$AZ ParameterKey=Zone,ParameterValue=$Zone ParameterKey=VPCID,ParameterValue=$VPCID ParameterKey=CIDR,ParameterValue=$CIDR --region $Region
+else
 aws cloudformation create-stack --stack-name $StackName --template-body file://single_subnet/SingleSubnet.template --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=AZ,ParameterValue=$AZ ParameterKey=Zone,ParameterValue=$Zone ParameterKey=VPCID,ParameterValue=$VPCID ParameterKey=CIDR,ParameterValue=$CIDR --region $Region
-
+fi
 #Wait for Template to complete
 aws cloudformation wait stack-create-complete --stack-name $StackName --region $Region
