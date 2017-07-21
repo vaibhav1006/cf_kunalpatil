@@ -49,7 +49,7 @@
                 },
                 "InstanceTenancy" : "default",
                 "EnableDnsSupport" : "true",
-                "EnableDnsHostnames" : "false",
+                "EnableDnsHostnames" : "true",
                 "Tags"               : [
                     {
                         "Key" : "Name",
