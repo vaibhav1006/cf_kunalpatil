@@ -34,7 +34,9 @@ stack=$($command1)
 if [ "$stack" = "$StackName" ]; then
 #Launch Cloudformation template
 aws cloudformation update-stack --stack-name $StackName --template-body file://single_subnet/SingleSubnet.template --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=AZ,ParameterValue=$AZ ParameterKey=Zone,ParameterValue=$Zone ParameterKey=VPCID,ParameterValue=$VPCID ParameterKey=CIDR,ParameterValue=$CIDR --region $Region
+echo " changes in stack $StackName"
 else
+
 aws cloudformation create-stack --stack-name $StackName --template-body file://single_subnet/SingleSubnet.template --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=AZ,ParameterValue=$AZ ParameterKey=Zone,ParameterValue=$Zone ParameterKey=VPCID,ParameterValue=$VPCID ParameterKey=CIDR,ParameterValue=$CIDR --region $Region
 #Wait for Template to complete
 aws cloudformation wait stack-create-complete --stack-name $StackName --region $Region

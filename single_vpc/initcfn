@@ -27,6 +27,7 @@ stack=$($command1)
 if [ "$stack" = "$StackName" ]; then
 #update cloudformation template
 aws cloudformation update-stack --stack-name $StackName --template-body file://single_vpc/SingleVPC.template --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=CIDR,ParameterValue=$CIDR --region $Region
+echo "stack update in $StackName"
 else
 #Launch Cloudformation template
 aws cloudformation create-stack --stack-name $StackName --template-body file://SingleVPC.template --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=CIDR,ParameterValue=$CIDR --region $Region
