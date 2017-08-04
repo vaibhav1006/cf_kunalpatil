@@ -72,10 +72,24 @@
             "Type" : "String",
             "Default" : "10.1.0.0/24",
             "Description" : "Enter CIDR for this Subnet"
-        }
+        },
+		"InternetGateway":{
+			"Type":"String",
+			"Description":"Enter IntergatewayID"
+			}
     },
     "Mappings"                 : {
     },
+	"Conditions": {
+			"SubnetZone": {
+				"Fn::Equals": [
+					{
+						"Ref": "Zone"
+					},
+						"PE"
+      ]
+    }
+	},
     "Resources"                : {
         "Subnet" : {
             "Type" : "AWS::EC2::Subnet",
@@ -156,6 +170,19 @@
                         }
                     }
                 ]
+            }
+        },
+		"Route"           : {
+            "Type" : "AWS::EC2::Route",
+            "Condition": "SubnetZone",
+            "Properties" : {
+                "RouteTableId" : {
+                    "Ref" : "SubnetRouteTable"
+                },
+                "DestinationCidrBlock" : "0.0.0.0/0",
+                "GatewayId"            : {
+                    "Ref" : "InternetGateway"
+                }
             }
         },
         "SubnetRouteTableAssociation" : {
