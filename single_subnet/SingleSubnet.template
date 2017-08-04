@@ -100,6 +100,16 @@
                 "CidrBlock" : {
                     "Ref" : "CIDR"
                 },
+				"AvailabilityZone" :{
+					"Fn::Join" :[
+							"",
+							[
+								{"Ref":"Region" },
+								{"Ref":"AZ"}
+						
+							]
+						]
+					},
                 "Tags"      : [
                     {
                         "Key" : "Name",
