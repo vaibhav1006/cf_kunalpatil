@@ -1,6 +1,6 @@
 unset  AWS_SESSION_TOKEN
 
-temp_role=$(aws sts assume-role --role-arn "arn:aws:iam::724644326612:role/kunaltest" --role-session-name "client_role_vsts" --query 'Credentials.[SecretAccessKey,AccessKeyId,SessionToken]' --output text)
+temp_role=$(aws sts assume-role --role-arn "arn:aws:iam::713729228264:role/Jenkins_Tool_Access" --role-session-name "client_role_jenkins" --query 'Credentials.[SecretAccessKey,AccessKeyId,SessionToken]' --output text)
 
 # get the aws_secret_access_key
 export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | cut -f1 -d ' ')
