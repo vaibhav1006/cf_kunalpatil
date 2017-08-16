@@ -258,6 +258,7 @@
         },
 	"acl1": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Egress": "true",
@@ -275,6 +276,7 @@
     },
     "acl2": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Egress": "true",
@@ -292,6 +294,7 @@
     },
     "acl3": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Egress": "true",
@@ -309,6 +312,7 @@
     },
     "acl4": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Egress": "true",
@@ -326,6 +330,7 @@
     },
     "acl5": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Egress": "true",
@@ -343,6 +348,7 @@
     },
     "acl6": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Egress": "true",
@@ -360,6 +366,7 @@
     },
     "acl7": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Egress": "true",
@@ -377,6 +384,7 @@
     },
     "acl8": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Egress": "true",
@@ -394,6 +402,7 @@
     },
     "acl9": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Protocol": "6",
@@ -410,6 +419,7 @@
     },
     "acl10": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Protocol": "6",
@@ -426,6 +436,7 @@
     },
     "acl11": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Protocol": "6",
@@ -442,6 +453,7 @@
     },
     "acl12": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Protocol": "6",
@@ -458,6 +470,7 @@
     },
     "acl13": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Protocol": "6",
@@ -474,6 +487,7 @@
     },
     "acl14": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Protocol": "6",
@@ -490,6 +504,7 @@
     },
     "acl15": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Protocol": "6",
@@ -506,6 +521,7 @@
     },
     "acl16": {
       "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
       "Properties": {
         "CidrBlock": "0.0.0.0/0",
         "Protocol": "6",
