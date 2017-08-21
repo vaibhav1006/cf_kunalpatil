@@ -53,7 +53,7 @@
 		
 		"UserName" : { 
 		"Type"				    : "String",
-		"Default"			    : "jenkinstest",
+		"Default"			    : "test",
 		"Description"			: "Please Provide Name of the IAM user"		
 		},
 		
@@ -65,7 +65,7 @@
 		
 		"GroupName" : { 
 		"Type"				    : "String",
-		"Default"			    : "Sogetiadmin",
+		"Default"			    : "sogetiadmin",
 		"Description"			: "Please Provide Name of the IAM Role"		
 		}
 	},
@@ -201,7 +201,7 @@
              "Sid": "",
              "Effect": "Allow",
              "Principal": {
-             "AWS": "arn:aws:iam::684821578293:user/jenkinstest",
+             "AWS": "arn:aws:iam::684821578293:user/test",
              "Service": "cloudformation.amazonaws.com"
             },
            
