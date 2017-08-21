@@ -4,13 +4,13 @@
 	"Description" : "IAM groups and account-wide role configurations",
 
 	"Parameters" : {
-		"CustomerPrefix" : {
+	   "CustomerPrefix" : {
             "Type" : "String",
             "Default" : "testcust",
             "Description" : "Enter Customer Prefix"
         },
 
-		"Environment"    : {
+	   "Environment"    : {
             "Type" : "String",
             "Default" : "dt",
             "Description" : "Enter Environment (Input Format - d=development, t=test, a=acceptance, p=production, dt=devtest, ap=acceptanceproduction)",
@@ -24,8 +24,9 @@
             ]
         },
 
+
 	
-		"CreateCodeDeployRole" : {
+	 "CreateCodeDeployRole" : {
 			"Type"					: "String",
 			"Default"				: "true",
 			"Description"			: "Whether a role should be created for use with AWS CodeDeploy",
