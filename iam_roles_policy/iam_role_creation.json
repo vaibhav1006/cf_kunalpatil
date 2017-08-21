@@ -4,7 +4,7 @@
 	"Description" : "IAM groups and account-wide role configurations",
 
 	"Parameters" : {
-	    "CustomerPrefix" : {
+		"CustomerPrefix" : {
             "Type" : "String",
             "Default" : "testcust",
             "Description" : "Enter Customer Prefix"
@@ -53,7 +53,7 @@
 		
 		"UserName" : { 
 		"Type"				    : "String",
-		"Default"			    : "test",
+		"Default"			    : "jenkins",
 		"Description"			: "Please Provide Name of the IAM user"		
 		},
 		
@@ -173,6 +173,7 @@
 
 		   "JenkinsUser" : {
 			"Type" : "AWS::IAM::User",
+			"Condition" : "CreateJenkinsRole",
 			"Properties" : {
 			"UserName" : { "Ref" : "UserName" },
 				"ManagedPolicyArns": 
@@ -182,9 +183,13 @@
 			}
          },		
 
+		  
+		 
+		 
 			"AWSJenkinsServiceRole" : {
 			"Type": "AWS::IAM::Role",
 			"Condition" : "CreateJenkinsRole",
+			"DependsOn" : "JenkinsUser",
 			"Properties" : {
 				"RoleName": { "Ref" : "RoleName" },
 				"AssumeRolePolicyDocument": {
@@ -201,7 +206,7 @@
              "Sid": "",
              "Effect": "Allow",
              "Principal": {
-             "AWS": "arn:aws:iam::684821578293:user/test",
+             "AWS": { "Fn::Join" : [ "/", [ "arn:aws:iam::713729228264:user", { "Ref" : "UserName" } ]]},
              "Service": "cloudformation.amazonaws.com"
             },
            
