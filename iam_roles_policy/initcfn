@@ -1,0 +1,57 @@
+#!/bin/bash 
+
+unset  AWS_SESSION_TOKEN
+
+temp_role=$(aws sts assume-role --role-arn "arn:aws:iam::684821578293:role/cfn1" --role-session-name "cfn1" --query 'Credentials.[SecretAccessKey,AccessKeyId,SessionToken]' --output text)
+ 
+# get the aws_secret_access_key
+export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | cut -f1 -d ' ')
+ 
+# get the aws_secret_access_key
+export AWS_ACCESS_KEY_ID=$(echo $temp_role | cut -f2 -d ' ')
+ 
+# get the aws_secret_access_key
+export AWS_SESSION_TOKEN=$(echo $temp_role | cut -f3 -d ' ')
+
+env | grep -i AWS_
+
+
+#Inputs
+CustomerPrefix=$1
+Environment=$2
+CreateCodeDeployRole=$3
+CreateECSRole=$4
+CreateJenkinsRole=$5
+UserName=$6
+RoleName=$7
+GroupName=$8	
+
+
+
+#Values
+
+StackName=$CustomerPrefix"-"$Environment"-security-cfs"
+
+command1="aws cloudformation describe-stacks --stack-name $StackName   --query Stacks[].StackName --output text"
+stack=$($command1)
+
+
+####condition for create or update stack 
+if [ "$stack" = "$StackName" ]; then
+
+#update cloudformation template
+aws cloudformation update-stack --stack-name $StackName  --template-body file://iam_roles_policy/iam_role_creation.json --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix  ParameterKey=Environment,ParameterValue=$Environment ParameterKey=CreateCodeDeployRole,ParameterValue=$CreateCodeDeployRole ParameterKey=CreateECSRole,ParameterValue=$CreateECSRole  ParameterKey=CreateJenkinsRole,ParameterValue=$CreateJenkinsRole  ParameterKey=UserName,ParameterValue=$UserName ParameterKey=RoleName,ParameterValue=$RoleName ParameterKey=GroupName,ParameterValue=$GroupName --capabilities CAPABILITY_NAMED_IAM 
+
+ 
+echo "stack update in $StackName"
+
+else
+
+#Launch Cloudformation template
+aws cloudformation create-stack --stack-name $StackName  --template-body file://iam_roles_policy/iam_role_creation.json --parameters  ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix  ParameterKey=Environment,ParameterValue=$Environment ParameterKey=CreateCodeDeployRole,ParameterValue=$CreateCodeDeployRole ParameterKey=CreateECSRole,ParameterValue=$CreateECSRole  ParameterKey=CreateJenkinsRole,ParameterValue=$CreateJenkinsRole  ParameterKey=UserName,ParameterValue=$UserName ParameterKey=RoleName,ParameterValue=$RoleName ParameterKey=GroupName,ParameterValue=$GroupName --capabilities CAPABILITY_NAMED_IAM
+
+
+#Wait for Template to complete
+aws cloudformation wait stack-create-complete --stack-name $StackName 
+
+fi

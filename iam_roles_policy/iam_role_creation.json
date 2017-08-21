@@ -1,0 +1,258 @@
+{
+	"AWSTemplateFormatVersion" : "2010-09-09",
+
+	"Description" : "IAM groups and account-wide role configurations",
+
+	"Parameters" : {
+	    "CustomerPrefix" : {
+            "Type" : "String",
+            "Default" : "testcust",
+            "Description" : "Enter Customer Prefix"
+        },
+
+		"Environment"    : {
+            "Type" : "String",
+            "Default" : "dt",
+            "Description" : "Enter Environment (Input Format - d=development, t=test, a=acceptance, p=production, dt=devtest, ap=acceptanceproduction)",
+            "AllowedValues" : [
+                "d",
+                "t",
+                "a",
+                "p",
+                "dt",
+                "ap"
+            ]
+        },
+
+	
+		"CreateCodeDeployRole" : {
+			"Type"					: "String",
+			"Default"				: "true",
+			"Description"			: "Whether a role should be created for use with AWS CodeDeploy",
+			"AllowedValues"			: ["true", "false"],
+			"ConstraintDescription"	: "Must be true or false."
+		},
+
+		
+		"CreateECSRole" : {
+			"Type"				    : "String",
+			"Default"			    : "true",
+			"Description"			: "Whether a role should be created for use with AWS EC2 Container Service",
+			"AllowedValues"			: ["true", "false"],
+			"ConstraintDescription"	: "Must be true or false."
+		},
+		
+		"CreateJenkinsRole" : {
+			"Type"				    : "String",
+			"Default"			    : "true",
+			"Description"			: "Whether a role should be created for use with Aws Jenkins Service",
+			"AllowedValues"			: ["true", "false"],
+			"ConstraintDescription"	: "Must be true or false."
+		},
+
+		
+		"UserName" : { 
+		"Type"				    : "String",
+		"Default"			    : "jenkins",
+		"Description"			: "Please Provide Name of the IAM user"		
+		},
+		
+		"RoleName" : { 
+		"Type"				    : "String",
+		"Default"			    : "Jenkins_Tool_Access",
+		"Description"			: "Please Provide Name of the IAM Role"		
+		},
+		
+		"GroupName" : { 
+		"Type"				    : "String",
+		"Default"			    : "Sogetiadmin",
+		"Description"			: "Please Provide Name of the IAM Role"		
+		}
+	},
+	
+
+	"Conditions" :{
+		"IsDev" : {
+			"Fn::Equals" : [ { "Ref" : "Environment" }, "dev" ]
+		},
+		"IsQet" : {
+			"Fn::Equals" : [ { "Ref" : "Environment" }, "qet" ]
+		},
+		"IsStg" : {
+			"Fn::Equals" : [ { "Ref" : "Environment" }, "stg" ]
+		},
+		"IsPrd" : {
+			"Fn::Equals" : [ { "Ref" : "Environment" }, "prd" ]
+		},
+		
+		"CreateCodeDeployRole" : {
+			"Fn::Equals" : [ { "Ref" : "CreateCodeDeployRole" }, "true" ]
+		},
+				
+		
+		"CreateECSRole" : {
+			"Fn::Equals" : [ { "Ref" : "CreateECSRole" }, "true" ]
+		},
+		
+		"CreateJenkinsRole" : {
+			"Fn::Equals" : [ { "Ref" : "CreateJenkinsRole" }, "true" ]
+		}
+		
+	},
+
+	"Resources" : {
+
+		"AWSCodeDeployRole" : {
+			"Type" : "AWS::IAM::Role",
+			"Condition" : "CreateCodeDeployRole",
+			"Properties" : {
+				"AssumeRolePolicyDocument": {
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Principal": {
+								"Service": {
+									"Fn::Join": [
+										".",
+										[
+											"codedeploy",
+											{ "Ref" : "AWS::Region" },
+											"amazonaws.com"
+										]
+									]
+								}
+							},
+							"Action": "sts:AssumeRole"
+						}
+					]
+				},
+				
+				"Policies" : [
+					{
+						"PolicyName" : "AWSCodeDeployPolicy",
+						"PolicyDocument" : {
+							"Statement": [
+								{
+									"Action": [
+										"autoscaling:PutLifecycleHook",
+										"autoscaling:DeleteLifecycleHook",
+										"autoscaling:RecordLifecycleActionHeartbeat",
+										"autoscaling:CompleteLifecycleAction",
+										"autoscaling:DescribeAutoscalingGroups",
+										"autoscaling:PutInstanceInStandby",
+										"autoscaling:PutInstanceInService",
+										"ec2:Describe*"
+									],
+									"Effect": "Allow",
+									"Resource": "*"
+								},
+								{
+									"Action": [
+										"s3:Get*",
+        									"s3:List*"
+									],
+									"Effect": "Allow",
+									"Resource": {
+										"Fn::Join": [
+											"-",
+											[
+												"arn:aws:s3:::deployments",
+												{ "Ref" : "CustomerPrefix" },
+												{ "Ref" : "Environment" },
+												"/artifacts/projects/*"
+											]
+										]
+									}
+								}
+							]
+						}
+					}
+				]
+			}
+		},
+
+		   "JenkinsUser" : {
+			"Type" : "AWS::IAM::User",
+			"Properties" : {
+			"UserName" : { "Ref" : "UserName" },
+				"ManagedPolicyArns": 
+                    [
+                        "arn:aws:iam::aws:policy/AdministratorAccess"
+                    ] 
+			}
+         },		
+
+			"AWSJenkinsServiceRole" : {
+			"Type": "AWS::IAM::Role",
+			"Condition" : "CreateJenkinsRole",
+			"Properties" : {
+				"RoleName": { "Ref" : "RoleName" },
+				"AssumeRolePolicyDocument": {
+					"Statement": [
+				{
+				"Sid": "",
+				"Effect": "Allow",
+				"Principal": {
+				"Service": "cloudformation.amazonaws.com"
+			    },
+				"Action": "sts:AssumeRole"
+			 },
+            {
+             "Sid": "",
+             "Effect": "Allow",
+             "Principal": {
+             "AWS": "arn:aws:iam::684821578293:user/jenkins",
+             "Service": "cloudformation.amazonaws.com"
+            },
+           
+		   "Action": "sts:AssumeRole"
+           }]
+		  },
+		  "ManagedPolicyArns": 
+                    [
+                        "arn:aws:iam::aws:policy/AdministratorAccess"
+                    ]
+		  
+     	}
+	},
+	
+		    "JenkinsUserAccessKey" : {
+			"Type" : "AWS::IAM::AccessKey",
+			"Properties" : {
+			"UserName" : { "Ref" : "JenkinsUser" }
+			}
+		},
+
+			"ServiceAccountsGroup" : {
+			"Type": "AWS::IAM::Group",
+			"Properties" : {
+			"GroupName" : { "Ref" : "GroupName" }
+            			
+		}
+       
+	   },
+	   
+	   "UserToGroupAddition" : { 
+	   "Type": "AWS::IAM::UserToGroupAddition",
+	   "Properties" : {
+	     "GroupName" : { "Ref" : "ServiceAccountsGroup" },
+	     "Users" : [ { "Ref" : "UserName" } ]
+		 
+	  }
+	  
+	 } 		
+	},
+
+		"Outputs" : {
+		
+		"JenkinsUserAccessKey" : {
+			"Description" 	: "The access key for the Jenkins user",
+			"Value"		: { "Ref" : "JenkinsUserAccessKey" }
+		},
+
+		"JenkinsUserSecret" : {
+			"Description" 	: "The secret key for the Jenkins user",
+			"Value"		: { "Fn::GetAtt" : [ "JenkinsUserAccessKey", "SecretAccessKey" ] }
+		}
+	}
+}
