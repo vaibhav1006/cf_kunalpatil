@@ -53,7 +53,7 @@
 		
 		"UserName" : { 
 		"Type"				    : "String",
-		"Default"			    : "jenkins",
+		"Default"			    : "jenkinstest",
 		"Description"			: "Please Provide Name of the IAM user"		
 		},
 		
@@ -201,7 +201,7 @@
              "Sid": "",
              "Effect": "Allow",
              "Principal": {
-             "AWS": "arn:aws:iam::684821578293:user/jenkins",
+             "AWS": "arn:aws:iam::684821578293:user/jenkinstest",
              "Service": "cloudformation.amazonaws.com"
             },
            
