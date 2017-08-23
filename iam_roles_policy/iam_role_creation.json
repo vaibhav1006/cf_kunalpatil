@@ -24,10 +24,10 @@
             ]
         },
 	
-               		"Cfnrole" : {
+		"Cfnrole" : {
 			"Type"				    : "String",
 			"Default"			    : "true",
-			"Description"		  	: "Whether a role should be created for use with Aws Jenkins Service",
+			"Description"			: "Whether a role should be created for use with Aws Jenkins Service",
 			"AllowedValues"			: ["true", "false"],
 			"ConstraintDescription"	: "Must be true or false."
 		},
@@ -121,32 +121,32 @@
 		
 		"CfnRoleName" : { 
 		"Type"				    : "String",
-		"Default"			    : "Jenkins_Tool_Access",
+		"Default"			    : "Cfn_Tool_Access",
 		"Description"			: "Please provide IAM role name used for jenkins server"		
 		},
 		
 		"CfnGroupA" : { 
 		"Type"				    : "String",
-		"Default"			    : "Administrator",
+		"Default"			    : "sogetiadmin",
 		"Description"			: "Please provide IAM group name A this  group contain users has full access and can delegate permissions to every service and resource in AWS"		
 		},
 		
 		"CfnGroupB" : { 
 		"Type"				    : "String",
-		"Default"			    : "SystemAdministrator",
+		"Default"			    : "sogetideveloper",
 		"Description"			: "Please provide IAM group name B this group contain users sets up and maintains resources for development operations"		
 		},
 		
 		"CfnGroupC" : { 
 		"Type"				    : "String",
-		"Default"			    : "DBA",
+		"Default"			    : "sogetidba",
 		"Description"			: "Please provide IAM group name C this group contain  users sets up, configures, and maintains databases in the AWS Cloud"		
 		},
 		
 		"CfnGroupD" : { 
 		"Type"				    : "String",
-		"Default"			    : "Read-Only",
-		"Description"			: "Please provide IAM group name D this group contain users has  read-only access to AWS services and resources"		
+		"Default"			    : "sogetiro",
+		"Description"			: "Please provide IAM group name D this group contain  users aws read olny access"		
 		}
 		
 		
@@ -314,53 +314,172 @@
 			"Type": "AWS::IAM::Group",
 			"Properties" : {
 			"GroupName" : { "Ref" : "CfnGroupA" },
-			"ManagedPolicyArns": 
-                    [
-                        "arn:aws:iam::aws:policy/AdministratorAccess"
-                    ]
+			"Policies" : [ {
+			"PolicyName" : "ssf-role-admin_client1",
+			"PolicyDocument" : {
+			"Version" : "2012-10-17",
+			"Statement": [
+             {  
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Resource": "arn:aws:iam::414642470704:role/ssf_role_admin"
+        }
+		
+    ] }},
+	{
+	       "PolicyName" : "ssf-role-admin_client2",
+			"PolicyDocument" : {
+			"Version" : "2012-10-17",
+			"Statement": [
+             {  
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Resource": "arn:aws:iam::944229851595:role/ssf_role_admin"
+        }
+		
+    ] }}
+
+	 ]
+		
+					
+	}
             			
-		}
-       
-	   },
+},
+
 	    
 	        "CfnBaccountsGroup" : {
 			"Type": "AWS::IAM::Group",
 			"Properties" : {
 			"GroupName" : { "Ref" : "CfnGroupB" },
+			"Policies" : [ {
+			"PolicyName" : "ssf-role-sysadmin_client1",
+			"PolicyDocument" : {
+			"Version" : "2012-10-17",
+			"Statement": [
+             {  
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Resource": "arn:aws:iam::414642470704:role/ssf_role_sysadmin"
+        }
+		
+    ] }},
+	{
+			"PolicyName" : "ssf-role-sysadmin_client2",
+			"PolicyDocument" : {
+			"Version" : "2012-10-17",
+			"Statement": [
+             {  
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Resource": "arn:aws:iam::944229851595:role/ssf_role_sysadmin"
+        }
+		
+    ] }}
+
+	 ],
+	
+   
+   
 			"ManagedPolicyArns": 
                     [
                         "arn:aws:iam::aws:policy/job-function/SystemAdministrator"
                     ]
+					
+	}
             			
-		}
-       
-	   },
+},
+			
+			
 	        "CfnCaccountsGroup" : {
 			"Type": "AWS::IAM::Group",
 			"Properties" : {
 			"GroupName" : { "Ref" : "CfnGroupC" },
-			"ManagedPolicyArns": 
-                    [
-                        "arn:aws:iam::aws:policy/job-function/DatabaseAdministrator"
-                    ]
+			"Policies" : [ {
+			"PolicyName" : "ssf-role-dba_client1",
+			"PolicyDocument" : {
+			"Version" : "2012-10-17",
+			"Statement": [
+             {  
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Resource": "arn:aws:iam::414642470704:role/ssf_role_dba"
+        }
+		
+    ] }},
+	
+	{
+	       "PolicyName" : "ssf-role-dba_client2",
+			"PolicyDocument" : {
+			"Version" : "2012-10-17",
+			"Statement": [
+             {  
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+           
+		   "Resource": "arn:aws:iam::944229851595:role/ssf_role_dba"
+        }
+		
+    ] }}
+
+	 ]
+		
+					
+	}
             			
-		}
-       
-	   }, 
+},			
+	
 	   
 	        "CfnDaccountsGroup" : {
 			"Type": "AWS::IAM::Group",
 			"Properties" : {
 			"GroupName" : { "Ref" : "CfnGroupD" },
-			"ManagedPolicyArns": 
-                    [
-                        "arn:aws:iam::aws:policy/ReadOnlyAccess"
-                    ]
+			"Policies" : [ {
+			"PolicyName" : "ssf-role-readonly_client1",
+			"PolicyDocument" : {
+			"Version" : "2012-10-17",
+			"Statement": [
+             {  
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Resource": "arn:aws:iam::414642470704:role/ssf_role_readonly"
+        }
+		
+    ] }},
+	{
+	       "PolicyName" : "ssf-role-readonly_client2",
+			"PolicyDocument" : {
+			"Version" : "2012-10-17",
+			"Statement": [
+             {  
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Resource": "arn:aws:iam::944229851595:role/ssf_role_readonly"
+        }
+		
+    ] }}
+
+	 ]
+		
+					
+	}
             			
-		}
-       
-	   },
-	   
+},
 	   
 	     "CfnGroupAToUserAaddition" : { 
 	     "Type": "AWS::IAM::UserToGroupAddition",
@@ -372,7 +491,7 @@
 	  
 	 },
 	 
-	 "CfnUserAToGroupAaddition" : { 
+		"CfnUserAToGroupAaddition" : { 
 	   "Type": "AWS::IAM::UserToGroupAddition",
 	   "Properties" : {
 	     "Users" : [ { "Ref" : "CfnuserA" } ],
