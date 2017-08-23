@@ -23,27 +23,8 @@
                 "ap"
             ]
         },
-
-
 	
-	 "CreateCodeDeployRole" : {
-			"Type"					: "String",
-			"Default"				: "true",
-			"Description"			: "Whether a role should be created for use with AWS CodeDeploy",
-			"AllowedValues"			: ["true", "false"],
-			"ConstraintDescription"	: "Must be true or false."
-		},
-
-		
-		"CreateECSRole" : {
-			"Type"				    : "String",
-			"Default"			    : "true",
-			"Description"			: "Whether a role should be created for use with AWS EC2 Container Service",
-			"AllowedValues"			: ["true", "false"],
-			"ConstraintDescription"	: "Must be true or false."
-		},
-		
-		"CreateJenkinsRole" : {
+		"CFNRole" : {
 			"Type"				    : "String",
 			"Default"			    : "true",
 			"Description"			: "Whether a role should be created for use with Aws Jenkins Service",
@@ -52,147 +33,133 @@
 		},
 
 		
-		"UserName" : { 
-		"Type"				    : "String",
-		"Default"			    : "jenkins",
-		"Description"			: "Please Provide Name of the IAM user"		
-		},
-		
-		"RoleName" : { 
-		"Type"				    : "String",
-		"Default"			    : "Jenkins_Tool_Access",
-		"Description"			: "Please Provide Name of the IAM Role"		
-		},
-		
-		"GroupName" : { 
+		"CFNAdminUser" : { 
 		"Type"				    : "String",
 		"Default"			    : "sogetiadmin",
-		"Description"			: "Please Provide Name of the IAM Role"		
+		"Description"			: "Please provide IAM user name for group administrator"	
+		},
+		
+		"CFNSysAdminUser" : { 
+		"Type"				    : "String",
+		"Default"			    : "sogetideveloper",
+		"Description"			: "Please provide IAM user name for group systemadministrator"		
+		},
+		
+		"CFNDBAUser" : { 
+		"Type"				    : "String",
+		"Default"			    : "sogetidba",
+		"Description"			: "Please provide IAM user name for group databaseadministrator"		
+		},
+		
+		"CFNReadOnlyUser" : { 
+		"Type"				    : "String",
+		"Default"			    : "sogetireaduser",
+		"Description"			: "Please provide IAM user name for group read only"		
+		},
+		
+		"CFNRoleName" : { 
+		"Type"				    : "String",
+		"Default"			    : "Jenkins_Tool_Access",
+		"Description"			: "Please provide IAM role name used for jenkins server"		
+		},
+		
+		"CFNAdminUserGroup" : { 
+		"Type"				    : "String",
+		"Default"			    : "Administrator",
+		"Description"			: "Please provide IAM group name this user has full access and can delegate permissions to every service and resource in AWS"		
+		},
+		
+		"CFNSysAdminUserGroup" : { 
+		"Type"				    : "String",
+		"Default"			    : "SystemAdministrator",
+		"Description"			: "Please provide IAM group name this user sets up and maintains resources for development operations"		
+		},
+		
+		"CFNDBAUserGroup" : { 
+		"Type"				    : "String",
+		"Default"			    : "DBA",
+		"Description"			: "Please provide IAM group name this user sets up, configures, and maintains databases in the AWS Cloud"		
+		},
+		
+		"CFNReadOnlyUserGroup" : { 
+		"Type"				    : "String",
+		"Default"			    : "Read-Only",
+		"Description"			: "Please provide IAM group name this user Provides read-only access to AWS services and resources"		
 		}
+		
+		
+		
 	},
 	
 
 	"Conditions" :{
 		"IsDev" : {
-			"Fn::Equals" : [ { "Ref" : "Environment" }, "dev" ]
+			"Fn::Equals" : [ { "Ref" : "Environment" }, "d" ]
 		},
-		"IsQet" : {
-			"Fn::Equals" : [ { "Ref" : "Environment" }, "qet" ]
+		"IsTest" : {
+			"Fn::Equals" : [ { "Ref" : "Environment" }, "t" ]
 		},
-		"IsStg" : {
-			"Fn::Equals" : [ { "Ref" : "Environment" }, "stg" ]
+		"IsAt" : {
+			"Fn::Equals" : [ { "Ref" : "Environment" }, "a" ]
 		},
 		"IsPrd" : {
-			"Fn::Equals" : [ { "Ref" : "Environment" }, "prd" ]
+			"Fn::Equals" : [ { "Ref" : "Environment" }, "p" ]
 		},
 		
-		"CreateCodeDeployRole" : {
-			"Fn::Equals" : [ { "Ref" : "CreateCodeDeployRole" }, "true" ]
-		},
-				
-		
-		"CreateECSRole" : {
-			"Fn::Equals" : [ { "Ref" : "CreateECSRole" }, "true" ]
+		"IsDt" : {
+			"Fn::Equals" : [ { "Ref" : "Environment" }, "dt" ]
 		},
 		
-		"CreateJenkinsRole" : {
-			"Fn::Equals" : [ { "Ref" : "CreateJenkinsRole" }, "true" ]
+		"IsAp" : {
+			"Fn::Equals" : [ { "Ref" : "Environment" }, "ap" ]
+		},
+		
+		
+		
+		"CFNRole" : {
+			"Fn::Equals" : [ { "Ref" : "CFNRole" }, "true" ]
 		}
 		
 	},
 
 	"Resources" : {
 
-		"AWSCodeDeployRole" : {
-			"Type" : "AWS::IAM::Role",
-			"Condition" : "CreateCodeDeployRole",
-			"Properties" : {
-				"AssumeRolePolicyDocument": {
-					"Statement": [
-						{
-							"Effect": "Allow",
-							"Principal": {
-								"Service": {
-									"Fn::Join": [
-										".",
-										[
-											"codedeploy",
-											{ "Ref" : "AWS::Region" },
-											"amazonaws.com"
-										]
-									]
-								}
-							},
-							"Action": "sts:AssumeRole"
-						}
-					]
-				},
-				
-				"Policies" : [
-					{
-						"PolicyName" : "AWSCodeDeployPolicy",
-						"PolicyDocument" : {
-							"Statement": [
-								{
-									"Action": [
-										"autoscaling:PutLifecycleHook",
-										"autoscaling:DeleteLifecycleHook",
-										"autoscaling:RecordLifecycleActionHeartbeat",
-										"autoscaling:CompleteLifecycleAction",
-										"autoscaling:DescribeAutoscalingGroups",
-										"autoscaling:PutInstanceInStandby",
-										"autoscaling:PutInstanceInService",
-										"ec2:Describe*"
-									],
-									"Effect": "Allow",
-									"Resource": "*"
-								},
-								{
-									"Action": [
-										"s3:Get*",
-        									"s3:List*"
-									],
-									"Effect": "Allow",
-									"Resource": {
-										"Fn::Join": [
-											"-",
-											[
-												"arn:aws:s3:::deployments",
-												{ "Ref" : "CustomerPrefix" },
-												{ "Ref" : "Environment" },
-												"/artifacts/projects/*"
-											]
-										]
-									}
-								}
-							]
-						}
-					}
-				]
-			}
-		},
-
-		   "JenkinsUser" : {
+		   "AdminUser" : {
 			"Type" : "AWS::IAM::User",
-			"Condition" : "CreateJenkinsRole",
 			"Properties" : {
-			"UserName" : { "Ref" : "UserName" },
-				"ManagedPolicyArns": 
-                    [
-                        "arn:aws:iam::aws:policy/AdministratorAccess"
-                    ] 
+			"UserName" : { "Ref" : "CFNAdminUser" } 
 			}
          },		
-
-		  
 		 
+		 
+		 "SysAdminUser" : {
+			"Type" : "AWS::IAM::User",
+			"Properties" : {
+			"UserName" : { "Ref" : "CFNSysAdminUser" }
+			}
+         },
+
+          "DBAUser" : {
+			"Type" : "AWS::IAM::User",
+			"Properties" : {
+			"UserName" : { "Ref" : "CFNDBAUser" }
+			}
+         },	
+
+		  "ReadOnlyUser" : {
+			"Type" : "AWS::IAM::User",
+			"Properties" : {
+			"UserName" : { "Ref" : "CFNReadOnlyUser" }
+			}
+         },		 
+
 		 
 			"AWSJenkinsServiceRole" : {
 			"Type": "AWS::IAM::Role",
-			"Condition" : "CreateJenkinsRole",
-			"DependsOn" : "JenkinsUser",
+			"Condition" : "CFNRole",
+			"DependsOn" : "AdminUser",
 			"Properties" : {
-				"RoleName": { "Ref" : "RoleName" },
+				"RoleName": { "Ref" : "CFNRoleName" },
 				"AssumeRolePolicyDocument": {
 					"Statement": [
 				{
@@ -207,7 +174,7 @@
              "Sid": "",
              "Effect": "Allow",
              "Principal": {
-             "AWS": { "Fn::Join" : [ "/", [ "arn:aws:iam::713729228264:user", { "Ref" : "UserName" } ]]},
+             "AWS": { "Fn::Join" : [ "/", [ "arn:aws:iam::684821578293:user", { "Ref" : "CFNAdminUser" } ]]},
              "Service": "cloudformation.amazonaws.com"
             },
            
@@ -222,43 +189,214 @@
      	}
 	},
 	
-		    "JenkinsUserAccessKey" : {
+		    "CFNAdminUserAccessKey" : {
 			"Type" : "AWS::IAM::AccessKey",
 			"Properties" : {
-			"UserName" : { "Ref" : "JenkinsUser" }
+			"UserName" : { "Ref" : "AdminUser" }
+			}
+		},
+		
+		    "CFNSysAdminUserAccessKey" : {
+			"Type" : "AWS::IAM::AccessKey",
+			"Properties" : {
+			"UserName" : { "Ref" : "SysAdminUser" }
+			}
+		},
+		
+		    "CFNDBAUserAccessKey" : {
+			"Type" : "AWS::IAM::AccessKey",
+			"Properties" : {
+			"UserName" : { "Ref" : "DBAUser" }
 			}
 		},
 
-			"ServiceAccountsGroup" : {
+		    "CFNReadOnlyUserAccessKey" : {
+			"Type" : "AWS::IAM::AccessKey",
+			"Properties" : {
+			"UserName" : { "Ref" : "ReadOnlyUser" }
+			}
+		},
+		
+			"CFNAdminAccountsGroup" : {
 			"Type": "AWS::IAM::Group",
 			"Properties" : {
-			"GroupName" : { "Ref" : "GroupName" }
+			"GroupName" : { "Ref" : "CFNAdminUserGroup" },
+			"ManagedPolicyArns": 
+                    [
+                        "arn:aws:iam::aws:policy/AdministratorAccess"
+                    ]
+            			
+		}
+       
+	   },
+	    
+	        "CFNSysAdminAccountsGroup" : {
+			"Type": "AWS::IAM::Group",
+			"Properties" : {
+			"GroupName" : { "Ref" : "CFNSysAdminUserGroup" },
+			"ManagedPolicyArns": 
+                    [
+                        "arn:aws:iam::aws:policy/job-function/SystemAdministrator"
+                    ]
+            			
+		}
+       
+	   },
+	        "CFNDBAAccountsGroup" : {
+			"Type": "AWS::IAM::Group",
+			"Properties" : {
+			"GroupName" : { "Ref" : "CFNDBAUserGroup" },
+			"ManagedPolicyArns": 
+                    [
+                        "arn:aws:iam::aws:policy/job-function/DatabaseAdministrator"
+                    ]
+            			
+		}
+       
+	   }, 
+	   
+	        "CFNReadOnlyAccountsGroup" : {
+			"Type": "AWS::IAM::Group",
+			"Properties" : {
+			"GroupName" : { "Ref" : "CFNReadOnlyUserGroup" },
+			"ManagedPolicyArns": 
+                    [
+                        "arn:aws:iam::aws:policy/ReadOnlyAccess"
+                    ]
             			
 		}
        
 	   },
 	   
-	   "UserToGroupAddition" : { 
-	   "Type": "AWS::IAM::UserToGroupAddition",
-	   "Properties" : {
-	     "GroupName" : { "Ref" : "ServiceAccountsGroup" },
-	     "Users" : [ { "Ref" : "UserName" } ]
+	   
+	     "CFNUserToGroupAdditionAdminUserToGroupAddition" : { 
+	     "Type": "AWS::IAM::UserToGroupAddition",
+	     "Properties" : {
+	     "GroupName" : { "Ref" : "CFNAdminAccountsGroup" },
+	     "Users" : [ { "Ref" : "CFNAdminUser" } ]
 		 
 	  }
 	  
-	 } 		
+	 },
+	 
+	 "CFNGroupToUserAdditionAdminUserToGroupAddition" : { 
+	   "Type": "AWS::IAM::UserToGroupAddition",
+	   "Properties" : {
+	     "Users" : [ { "Ref" : "CFNAdminUser" } ],
+		 "GroupName" : { "Ref" : "CFNAdminAccountsGroup" }
+	     
+		 
+	  }
+	  
+	 },
+	 
+	 "CFNUserToGroupAdditionSysAdminUserToGroupAddition" : { 
+	   "Type": "AWS::IAM::UserToGroupAddition",
+	   "Properties" : {
+	     "GroupName" : { "Ref" : "CFNSysAdminAccountsGroup" },
+	     "Users" : [ { "Ref" : "CFNSysAdminUser" } ]
+		 
+	  }
+	  
+	 },
+	 
+	 "CFNGroupToUserAdditionsysAdminUserToGroupAddition" : { 
+	   "Type": "AWS::IAM::UserToGroupAddition",
+	   "Properties" : {
+	     "Users" : [ { "Ref" : "CFNSysAdminUser" } ],
+		 "GroupName" : { "Ref" : "CFNSysAdminAccountsGroup" }
+	     
+		 
+	  }
+	  
+	 },
+	 
+	     "CFNUserToGroupAdditionDBAUserToGroupAddition" : { 
+	     "Type": "AWS::IAM::UserToGroupAddition",
+	     "Properties" : {
+	     "GroupName" : { "Ref" : "CFNDBAAccountsGroup" },
+	     "Users" : [ { "Ref" : "CFNDBAUser" } ]
+		 
+	  }
+	  
+	 },
+	 
+	    "CFNGroupToUserAdditionDBAUserToGroupAddition" : { 
+	    "Type": "AWS::IAM::UserToGroupAddition",
+	    "Properties" : {
+	    "Users" : [ { "Ref" : "CFNDBAUser" } ],
+		"GroupName" : { "Ref" : "CFNDBAAccountsGroup" }
+	     
+	  }
+	 
+	 },
+	 
+	 "CFNUserToGroupAdditionReadOnlyUserToGroupAddition" : { 
+	     "Type": "AWS::IAM::UserToGroupAddition",
+	     "Properties" : {
+	     "GroupName" : { "Ref" : "CFNReadOnlyAccountsGroup" },
+	     "Users" : [ { "Ref" : "CFNReadOnlyUser" } ]
+		 
+	  }
+	  
+	 },
+	 
+	 "CFNGroupToUserAdditionReadOnlyUserToGroupAddition" : { 
+	   "Type": "AWS::IAM::UserToGroupAddition",
+	   "Properties" : {
+	     "Users" : [ { "Ref" : "CFNReadOnlyUser" } ],
+		 "GroupName" : { "Ref" : "CFNReadOnlyAccountsGroup" }
+	     
+		 
+	  }
+	  
+	 }
+	 
+	 
 	},
 
 		"Outputs" : {
 		
-		"JenkinsUserAccessKey" : {
-			"Description" 	: "The access key for the Jenkins user",
-			"Value"		: { "Ref" : "JenkinsUserAccessKey" }
+		"CFNAdminUserAccessKey" : {
+			"Description" 	: "The access key for the CFN Group Admin",
+			"Value"		: { "Ref" : "CFNAdminUserAccessKey" }
 		},
 
-		"JenkinsUserSecret" : {
-			"Description" 	: "The secret key for the Jenkins user",
-			"Value"		: { "Fn::GetAtt" : [ "JenkinsUserAccessKey", "SecretAccessKey" ] }
+		"CFNAdminUserSecret" : {
+			"Description" 	: "The secret key for the CFN Group Adminstrator",
+			"Value"		: { "Fn::GetAtt" : [ "CFNAdminUserAccessKey", "SecretAccessKey" ] }
+		},
+		
+		"CFNSysAdminUserAccessKey" : {
+			"Description" 	: "The access key for the CFN Group SystemAdministrator",
+			"Value"		: { "Ref" : "CFNSysAdminUserAccessKey" }
+		},
+
+		"CFNSysAdminUserSecret" : {
+			"Description" 	: "The secret key for the CFN Group associated with SystemAdministrator  ",
+			"Value"		: { "Fn::GetAtt" : [ "CFNSysAdminUserAccessKey", "SecretAccessKey" ] }
+		},
+		
+		"CFNDBAUserAccessKey" : {
+			"Description" 	: "The access key for the CFN Group associated with DatabaseAdministrator",
+			"Value"		: { "Ref" : "CFNDBAUserAccessKey" }
+		},
+		
+		"CFNDBAUserSecret" : {
+			"Description" 	: "The secret key for the CFN Group associated with DatabaseAdministrator",
+			"Value"		: { "Fn::GetAtt" : [ "CFNDBAUserAccessKey", "SecretAccessKey" ] }
+		},
+		
+		"CFNReadOnlyUserAccessKey" : {
+			"Description" 	: "The access key for the CFN Group associated with  Read-Only",
+			"Value"		: { "Ref" : "CFNReadOnlyUserAccessKey" }
+		},
+		
+		"CFNReadOnlyUserSecret" : {
+			"Description" 	: "The secret key for the CFN Group associated with Read-Only",
+			"Value"		: { "Fn::GetAtt" : [ "CFNReadOnlyUserAccessKey", "SecretAccessKey" ] }
 		}
+		
+		
 	}
 }
