@@ -1,7 +1,7 @@
 {
 	"AWSTemplateFormatVersion" : "2010-09-09",
 
-	"Description" : "IAM groups and account-wide role configurations",
+	"Description" : "IAM groups and users configuration",
 
 	"Parameters" : {
 	   "CustomerPrefix" : {
@@ -24,67 +24,129 @@
             ]
         },
 	
-		"CFNRole" : {
+               		"Cfnrole" : {
 			"Type"				    : "String",
 			"Default"			    : "true",
-			"Description"			: "Whether a role should be created for use with Aws Jenkins Service",
+			"Description"		  	: "Whether a role should be created for use with Aws Jenkins Service",
 			"AllowedValues"			: ["true", "false"],
 			"ConstraintDescription"	: "Must be true or false."
 		},
 
 		
-		"CFNAdminUser" : { 
+		"CfnuserA" : { 
 		"Type"				    : "String",
-		"Default"			    : "sogetiadmin",
-		"Description"			: "Please provide IAM user name for group administrator"	
+		"Default"			    : "sogetiadmin@capgemini.com",
+		"Description"			: "Please provide IAM user name for group associated with A"	
 		},
 		
-		"CFNSysAdminUser" : { 
+		"CfnuserApwd"  : { 
+		"NoEcho"                : "true",
 		"Type"				    : "String",
-		"Default"			    : "sogetideveloper",
-		"Description"			: "Please provide IAM user name for group systemadministrator"		
+		"Default"			    : "sogetiadmin@123",
+		"Description"			: "Please provide IAM user name password for group associated with A"	
 		},
 		
-		"CFNDBAUser" : { 
-		"Type"				    : "String",
-		"Default"			    : "sogetidba",
-		"Description"			: "Please provide IAM user name for group databaseadministrator"		
+		"CfnuserApwdReset": {
+        "Type"                  : "String",
+        "Default"			    : "true",
+		"Description"           : "Specifies if IAM user name for group associated with A Group contain users has password set or not",
+		"AllowedValues"			: ["true", "false"],
+		"ConstraintDescription"	: "Must be true or false."
 		},
 		
-		"CFNReadOnlyUser" : { 
+   	
+		
+		"CfnuserB" : { 
 		"Type"				    : "String",
-		"Default"			    : "sogetireaduser",
-		"Description"			: "Please provide IAM user name for group read only"		
+		"Default"			    : "sogetideveloper@capgemini.com",
+		"Description"			: "Please provide IAM user name for group associated with B"		
 		},
 		
-		"CFNRoleName" : { 
+		"CfnuserBpwd"  : { 
+		"NoEcho"                : "true",
+		"Type"				    : "String",
+		"Default"			    : "sogetideveloper@123",
+		"Description"			: "Please provide IAM user name password for group associated with B"	
+		},
+		
+		"CfnuserBpwdReset": {
+        "Type"                  : "String",
+        "Default"			    : "true",
+		"Description"           : "Specifies if IAM user name for group associated with B Group contain users has password set or not",
+		"AllowedValues"			: ["true", "false"],
+		"ConstraintDescription"	: "Must be true or false."
+		},
+		
+		"CfnuserC" : { 
+		"Type"				    : "String",
+		"Default"			    : "sogetidba@capgemini.com",
+		"Description"			: "Please provide IAM user name for group associated with C"		
+		},
+		
+		"CfnuserCpwd"  : { 
+		"NoEcho"                : "true",
+		"Type"				    : "String",
+		"Default"			    : "sogetidba@123",
+		"Description"			: "Please provide IAM user name password for group associated with C"	
+		},
+		
+		"CfnuserCpwdReset": {
+        "Type"                  : "String",
+        "Default"			    : "true",
+		"Description"           : "Specifies if IAM user name for group associated with C Group contain users has password set or not",
+		"AllowedValues"			: ["true", "false"],
+		"ConstraintDescription"	: "Must be true or false."
+		},
+		
+		"CfnuserD" : { 
+		"Type"				    : "String",
+		"Default"			    : "sogetiro@capgemini.com",
+		"Description"			: "Please provide IAM user name for group associated with D"		
+		},
+		
+		"CfnuserDpwd"  : { 
+		"NoEcho"                : "true",
+		"Type"				    : "String",
+		"Default"			    : "sogetiro@123",
+		"Description"			: "Please provide IAM user name password for group associated with D"	
+		},
+		
+		"CfnuserDpwdReset": {
+        "Type"                  : "String",
+        "Default"			    : "true",
+		"Description"           : "Specifies if IAM user name for group associated with D Group contain users has password set or not",
+		"AllowedValues"			: ["true", "false"],
+		"ConstraintDescription"	: "Must be true or false."
+		},
+		
+		"CfnRoleName" : { 
 		"Type"				    : "String",
 		"Default"			    : "Jenkins_Tool_Access",
 		"Description"			: "Please provide IAM role name used for jenkins server"		
 		},
 		
-		"CFNAdminUserGroup" : { 
+		"CfnGroupA" : { 
 		"Type"				    : "String",
 		"Default"			    : "Administrator",
-		"Description"			: "Please provide IAM group name this user has full access and can delegate permissions to every service and resource in AWS"		
+		"Description"			: "Please provide IAM group name A this  group contain users has full access and can delegate permissions to every service and resource in AWS"		
 		},
 		
-		"CFNSysAdminUserGroup" : { 
+		"CfnGroupB" : { 
 		"Type"				    : "String",
 		"Default"			    : "SystemAdministrator",
-		"Description"			: "Please provide IAM group name this user sets up and maintains resources for development operations"		
+		"Description"			: "Please provide IAM group name B this group contain users sets up and maintains resources for development operations"		
 		},
 		
-		"CFNDBAUserGroup" : { 
+		"CfnGroupC" : { 
 		"Type"				    : "String",
 		"Default"			    : "DBA",
-		"Description"			: "Please provide IAM group name this user sets up, configures, and maintains databases in the AWS Cloud"		
+		"Description"			: "Please provide IAM group name C this group contain  users sets up, configures, and maintains databases in the AWS Cloud"		
 		},
 		
-		"CFNReadOnlyUserGroup" : { 
+		"CfnGroupD" : { 
 		"Type"				    : "String",
 		"Default"			    : "Read-Only",
-		"Description"			: "Please provide IAM group name this user Provides read-only access to AWS services and resources"		
+		"Description"			: "Please provide IAM group name D this group contain users has  read-only access to AWS services and resources"		
 		}
 		
 		
@@ -114,52 +176,83 @@
 			"Fn::Equals" : [ { "Ref" : "Environment" }, "ap" ]
 		},
 		
+		"CfnuserApwdReset" : {
+			"Fn::Equals" : [ { "Ref" : "CfnuserApwdReset" }, "true" ]
+		},
 		
+		"CfnuserBpwdReset" : {
+			"Fn::Equals" : [ { "Ref" : "CfnuserBpwdReset" }, "true" ]
+		},
 		
-		"CFNRole" : {
-			"Fn::Equals" : [ { "Ref" : "CFNRole" }, "true" ]
+		"CfnuserCpwdReset" : {
+			"Fn::Equals" : [ { "Ref" : "CfnuserCpwdReset" }, "true" ]
+		},
+		
+		"CfnuserDpwdReset" : {
+			"Fn::Equals" : [ { "Ref" : "CfnuserDpwdReset" }, "true" ]
+		},
+		
+		"Cfnrole" : {
+			"Fn::Equals" : [ { "Ref" : "Cfnrole" }, "true" ]
 		}
 		
 	},
 
 	"Resources" : {
 
-		   "AdminUser" : {
+		   "UserA" : {
 			"Type" : "AWS::IAM::User",
 			"Properties" : {
-			"UserName" : { "Ref" : "CFNAdminUser" } 
+			"UserName" : { "Ref" : "CfnuserA" },
+            "LoginProfile" : {
+            "Password" : { "Ref" : "CfnuserApwd" },
+			"PasswordResetRequired" : { "Ref" : "CfnuserApwdReset" }
+    		  }			
+			
 			}
          },		
 		 
 		 
-		 "SysAdminUser" : {
+		 "UserB" : {
 			"Type" : "AWS::IAM::User",
 			"Properties" : {
-			"UserName" : { "Ref" : "CFNSysAdminUser" }
+			"UserName" : { "Ref" : "CfnuserB" },
+			"LoginProfile" : {
+            "Password" : { "Ref" : "CfnuserBpwd" },
+			"PasswordResetRequired" : { "Ref" : "CfnuserBpwdReset" }
+    		  }
 			}
          },
 
-          "DBAUser" : {
+          "UserC" : {
 			"Type" : "AWS::IAM::User",
 			"Properties" : {
-			"UserName" : { "Ref" : "CFNDBAUser" }
+			"UserName" : { "Ref" : "CfnuserC" },
+			"LoginProfile" : {
+            "Password" : { "Ref" : "CfnuserCpwd" },
+			"PasswordResetRequired" : { "Ref" : "CfnuserCpwdReset" }
+    		  }
 			}
          },	
 
-		  "ReadOnlyUser" : {
+		  "UserD" : {
 			"Type" : "AWS::IAM::User",
 			"Properties" : {
-			"UserName" : { "Ref" : "CFNReadOnlyUser" }
+			"UserName" : { "Ref" : "CfnuserD" },
+			"LoginProfile" : {
+            "Password" : { "Ref" : "CfnuserDpwd" },
+			"PasswordResetRequired" : { "Ref" : "CfnuserDpwdReset" }
+    		  }
 			}
          },		 
 
 		 
 			"AWSJenkinsServiceRole" : {
 			"Type": "AWS::IAM::Role",
-			"Condition" : "CFNRole",
-			"DependsOn" : "AdminUser",
+			"Condition" : "Cfnrole",
+			"DependsOn" : "UserA",
 			"Properties" : {
-				"RoleName": { "Ref" : "CFNRoleName" },
+				"RoleName": { "Ref" : "CfnRoleName" },
 				"AssumeRolePolicyDocument": {
 					"Statement": [
 				{
@@ -174,7 +267,7 @@
              "Sid": "",
              "Effect": "Allow",
              "Principal": {
-             "AWS": { "Fn::Join" : [ "/", [ "arn:aws:iam::684821578293:user", { "Ref" : "CFNAdminUser" } ]]},
+             "AWS": { "Fn::Join" : [ "/", [ "arn:aws:iam::684821578293:user", { "Ref" : "CfnuserA" } ]]},
              "Service": "cloudformation.amazonaws.com"
             },
            
@@ -189,38 +282,38 @@
      	}
 	},
 	
-		    "CFNAdminUserAccessKey" : {
+		    "CfnUserAaccessKey" : {
 			"Type" : "AWS::IAM::AccessKey",
 			"Properties" : {
-			"UserName" : { "Ref" : "AdminUser" }
+			"UserName" : { "Ref" : "UserA" }
 			}
 		},
 		
-		    "CFNSysAdminUserAccessKey" : {
+		    "CfnUserBaccessKey" : {
 			"Type" : "AWS::IAM::AccessKey",
 			"Properties" : {
-			"UserName" : { "Ref" : "SysAdminUser" }
+			"UserName" : { "Ref" : "UserB" }
 			}
 		},
 		
-		    "CFNDBAUserAccessKey" : {
+		    "CfnUserCaccessKey" : {
 			"Type" : "AWS::IAM::AccessKey",
 			"Properties" : {
-			"UserName" : { "Ref" : "DBAUser" }
+			"UserName" : { "Ref" : "UserC" }
 			}
 		},
 
-		    "CFNReadOnlyUserAccessKey" : {
+		    "CfnUserDaccessKey" : {
 			"Type" : "AWS::IAM::AccessKey",
 			"Properties" : {
-			"UserName" : { "Ref" : "ReadOnlyUser" }
+			"UserName" : { "Ref" : "UserD" }
 			}
 		},
 		
-			"CFNAdminAccountsGroup" : {
+			"CfnAaccountsGroup" : {
 			"Type": "AWS::IAM::Group",
 			"Properties" : {
-			"GroupName" : { "Ref" : "CFNAdminUserGroup" },
+			"GroupName" : { "Ref" : "CfnGroupA" },
 			"ManagedPolicyArns": 
                     [
                         "arn:aws:iam::aws:policy/AdministratorAccess"
@@ -230,10 +323,10 @@
        
 	   },
 	    
-	        "CFNSysAdminAccountsGroup" : {
+	        "CfnBaccountsGroup" : {
 			"Type": "AWS::IAM::Group",
 			"Properties" : {
-			"GroupName" : { "Ref" : "CFNSysAdminUserGroup" },
+			"GroupName" : { "Ref" : "CfnGroupB" },
 			"ManagedPolicyArns": 
                     [
                         "arn:aws:iam::aws:policy/job-function/SystemAdministrator"
@@ -242,10 +335,10 @@
 		}
        
 	   },
-	        "CFNDBAAccountsGroup" : {
+	        "CfnCaccountsGroup" : {
 			"Type": "AWS::IAM::Group",
 			"Properties" : {
-			"GroupName" : { "Ref" : "CFNDBAUserGroup" },
+			"GroupName" : { "Ref" : "CfnGroupC" },
 			"ManagedPolicyArns": 
                     [
                         "arn:aws:iam::aws:policy/job-function/DatabaseAdministrator"
@@ -255,10 +348,10 @@
        
 	   }, 
 	   
-	        "CFNReadOnlyAccountsGroup" : {
+	        "CfnDaccountsGroup" : {
 			"Type": "AWS::IAM::Group",
 			"Properties" : {
-			"GroupName" : { "Ref" : "CFNReadOnlyUserGroup" },
+			"GroupName" : { "Ref" : "CfnGroupD" },
 			"ManagedPolicyArns": 
                     [
                         "arn:aws:iam::aws:policy/ReadOnlyAccess"
@@ -269,83 +362,83 @@
 	   },
 	   
 	   
-	     "CFNUserToGroupAdditionAdminUserToGroupAddition" : { 
+	     "CfnGroupAToUserAaddition" : { 
 	     "Type": "AWS::IAM::UserToGroupAddition",
 	     "Properties" : {
-	     "GroupName" : { "Ref" : "CFNAdminAccountsGroup" },
-	     "Users" : [ { "Ref" : "CFNAdminUser" } ]
+	     "GroupName" : { "Ref" : "CfnAaccountsGroup" },
+	     "Users" : [ { "Ref" : "CfnuserA" } ]
 		 
 	  }
 	  
 	 },
 	 
-	 "CFNGroupToUserAdditionAdminUserToGroupAddition" : { 
+	 "CfnUserAToGroupAaddition" : { 
 	   "Type": "AWS::IAM::UserToGroupAddition",
 	   "Properties" : {
-	     "Users" : [ { "Ref" : "CFNAdminUser" } ],
-		 "GroupName" : { "Ref" : "CFNAdminAccountsGroup" }
+	     "Users" : [ { "Ref" : "CfnuserA" } ],
+		 "GroupName" : { "Ref" : "CfnAaccountsGroup" }
 	     
 		 
 	  }
 	  
 	 },
 	 
-	 "CFNUserToGroupAdditionSysAdminUserToGroupAddition" : { 
+	 "CfnGroupBToUserBaddition" : { 
 	   "Type": "AWS::IAM::UserToGroupAddition",
 	   "Properties" : {
-	     "GroupName" : { "Ref" : "CFNSysAdminAccountsGroup" },
-	     "Users" : [ { "Ref" : "CFNSysAdminUser" } ]
+	     "GroupName" : { "Ref" : "CfnBaccountsGroup" },
+	     "Users" : [ { "Ref" : "CfnuserB" } ]
 		 
 	  }
 	  
 	 },
 	 
-	 "CFNGroupToUserAdditionsysAdminUserToGroupAddition" : { 
+	 "CfnUserBToGroupBaddition" : { 
 	   "Type": "AWS::IAM::UserToGroupAddition",
 	   "Properties" : {
-	     "Users" : [ { "Ref" : "CFNSysAdminUser" } ],
-		 "GroupName" : { "Ref" : "CFNSysAdminAccountsGroup" }
+	     "Users" : [ { "Ref" : "CfnuserB" } ],
+		 "GroupName" : { "Ref" : "CfnBaccountsGroup" }
 	     
 		 
 	  }
 	  
 	 },
 	 
-	     "CFNUserToGroupAdditionDBAUserToGroupAddition" : { 
+	     "CfnGroupCToUserCaddition" : { 
 	     "Type": "AWS::IAM::UserToGroupAddition",
 	     "Properties" : {
-	     "GroupName" : { "Ref" : "CFNDBAAccountsGroup" },
-	     "Users" : [ { "Ref" : "CFNDBAUser" } ]
+	     "GroupName" : { "Ref" : "CfnCaccountsGroup" },
+	     "Users" : [ { "Ref" : "CfnuserC" } ]
 		 
 	  }
 	  
 	 },
 	 
-	    "CFNGroupToUserAdditionDBAUserToGroupAddition" : { 
+	    "CfnUserCToGroupCaddition" : { 
 	    "Type": "AWS::IAM::UserToGroupAddition",
 	    "Properties" : {
-	    "Users" : [ { "Ref" : "CFNDBAUser" } ],
-		"GroupName" : { "Ref" : "CFNDBAAccountsGroup" }
+	    "Users" : [ { "Ref" : "CfnuserC" } ],
+		"GroupName" : { "Ref" : "CfnCaccountsGroup" }
 	     
 	  }
 	 
 	 },
 	 
-	 "CFNUserToGroupAdditionReadOnlyUserToGroupAddition" : { 
+	 "CfnGroupDToUserDaddition" : { 
 	     "Type": "AWS::IAM::UserToGroupAddition",
 	     "Properties" : {
-	     "GroupName" : { "Ref" : "CFNReadOnlyAccountsGroup" },
-	     "Users" : [ { "Ref" : "CFNReadOnlyUser" } ]
+	     "GroupName" : { "Ref" : "CfnDaccountsGroup" },
+	     "Users" : [ { "Ref" : "CfnuserD" } ]
 		 
 	  }
 	  
 	 },
 	 
-	 "CFNGroupToUserAdditionReadOnlyUserToGroupAddition" : { 
+	 "CfnUserDToGroupDaddition" : { 
 	   "Type": "AWS::IAM::UserToGroupAddition",
 	   "Properties" : {
-	     "Users" : [ { "Ref" : "CFNReadOnlyUser" } ],
-		 "GroupName" : { "Ref" : "CFNReadOnlyAccountsGroup" }
+	     "Users" : [ { "Ref" : "CfnuserD" } ],
+		 "GroupName" : { "Ref" : "CfnDaccountsGroup" }
 	     
 		 
 	  }
@@ -357,46 +450,47 @@
 
 		"Outputs" : {
 		
-		"CFNAdminUserAccessKey" : {
+		"CfnUserAaccessKey" : {
 			"Description" 	: "The access key for the CFN Group Admin",
-			"Value"		: { "Ref" : "CFNAdminUserAccessKey" }
+			"Value"		: { "Ref" : "CfnUserAaccessKey" }
 		},
 
-		"CFNAdminUserSecret" : {
+		"CfnAUserSecretKey" : {
 			"Description" 	: "The secret key for the CFN Group Adminstrator",
-			"Value"		: { "Fn::GetAtt" : [ "CFNAdminUserAccessKey", "SecretAccessKey" ] }
+			"Value"		: { "Fn::GetAtt" : [ "CfnUserAaccessKey", "SecretAccessKey" ] }
 		},
 		
-		"CFNSysAdminUserAccessKey" : {
+		"CfnUserBaccessKey" : {
 			"Description" 	: "The access key for the CFN Group SystemAdministrator",
-			"Value"		: { "Ref" : "CFNSysAdminUserAccessKey" }
+			"Value"		: { "Ref" : "CfnUserBaccessKey" }
 		},
 
-		"CFNSysAdminUserSecret" : {
+		"CfnBUserSecretKey" : {
 			"Description" 	: "The secret key for the CFN Group associated with SystemAdministrator  ",
-			"Value"		: { "Fn::GetAtt" : [ "CFNSysAdminUserAccessKey", "SecretAccessKey" ] }
+			"Value"		: { "Fn::GetAtt" : [ "CfnUserBaccessKey", "SecretAccessKey" ] }
 		},
 		
-		"CFNDBAUserAccessKey" : {
+		"CfnUserCaccessKey" : {
 			"Description" 	: "The access key for the CFN Group associated with DatabaseAdministrator",
-			"Value"		: { "Ref" : "CFNDBAUserAccessKey" }
+			"Value"		: { "Ref" : "CfnUserCaccessKey" }
 		},
 		
-		"CFNDBAUserSecret" : {
+		"CfnCUserSecretKey" : {
 			"Description" 	: "The secret key for the CFN Group associated with DatabaseAdministrator",
-			"Value"		: { "Fn::GetAtt" : [ "CFNDBAUserAccessKey", "SecretAccessKey" ] }
+			"Value"		: { "Fn::GetAtt" : [ "CfnUserCaccessKey", "SecretAccessKey" ] }
 		},
 		
-		"CFNReadOnlyUserAccessKey" : {
+		"CfnUserDaccessKey" : {
 			"Description" 	: "The access key for the CFN Group associated with  Read-Only",
-			"Value"		: { "Ref" : "CFNReadOnlyUserAccessKey" }
+			"Value"		: { "Ref" : "CfnUserDaccessKey" }
 		},
 		
-		"CFNReadOnlyUserSecret" : {
+		"CfnDUserSecretKey" : {
 			"Description" 	: "The secret key for the CFN Group associated with Read-Only",
-			"Value"		: { "Fn::GetAtt" : [ "CFNReadOnlyUserAccessKey", "SecretAccessKey" ] }
+			"Value"		: { "Fn::GetAtt" : [ "CfnUserDaccessKey", "SecretAccessKey" ] }
 		}
 		
 		
 	}
 }
+

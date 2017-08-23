@@ -19,13 +19,24 @@ env | grep -i AWS_
 #Inputs
 CustomerPrefix=$1
 Environment=$2
-CreateCodeDeployRole=$3
-CreateECSRole=$4
-CreateJenkinsRole=$5
-UserName=$6
-RoleName=$7
-GroupName=$8	
-
+Cfnrole=$3
+CfnuserA=$4
+CfnuserApwd=$5
+CfnuserApwdReset=$6
+CfnuserB=$7
+CfnuserBpwd=$8	
+CfnuserBpwdReset=$9
+CfnuserC=$10
+CfnuserCpwd=$11
+CfnuserCpwdReset=$12
+CfnuserD=$13
+CfnuserDpwd=$14
+CfnuserDpwdReset=$15
+CfnRoleName=$16
+CfnGroupA=$17
+CfnGroupB=$18
+CfnGroupC=$19
+CfnGroupD=$20
 
 
 #Values
@@ -40,7 +51,7 @@ stack=$($command1)
 if [ "$stack" = "$StackName" ]; then
 
 #update cloudformation template
-aws cloudformation update-stack --stack-name $StackName  --template-body file://iam_roles_policy/iam_role_creation.json --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix  ParameterKey=Environment,ParameterValue=$Environment ParameterKey=CreateCodeDeployRole,ParameterValue=$CreateCodeDeployRole ParameterKey=CreateECSRole,ParameterValue=$CreateECSRole  ParameterKey=CreateJenkinsRole,ParameterValue=$CreateJenkinsRole  ParameterKey=UserName,ParameterValue=$UserName ParameterKey=RoleName,ParameterValue=$RoleName ParameterKey=GroupName,ParameterValue=$GroupName --capabilities CAPABILITY_NAMED_IAM 
+aws cloudformation update-stack --stack-name $StackName  --template-body file://iam_roles_policy/iam_role_creation.json --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix  ParameterKey=Environment,ParameterValue=$Environment ParameterKey=Cfnrole,ParameterValue=$Cfnrole ParameterKey=CfnuserA,ParameterValue=$CfnuserA  ParameterKey=CfnuserApwd,ParameterValue=$CfnuserApwd  ParameterKey=CfnuserApwdReset,ParameterValue=$CfnuserApwdReset  ParameterKey=CfnuserB,ParameterValue=$CfnuserB ParameterKey=CfnuserBpwd,ParameterValue=$CfnuserBpwd ParameterKey=CfnuserBpwdReset,ParameterValue=$CfnuserBpwdReset  ParameterKey=CfnuserC,ParameterValue=$CfnuserC  ParameterKey=CfnuserCpwd,ParameterValue=$CfnuserCpwd  ParameterKey=CfnuserCpwdReset,ParameterValue=$CfnuserCpwdReset ParameterKey=CfnuserD,ParameterValue=$CfnuserD ParameterKey=CfnuserDpwd,ParameterValue=$CfnuserDpwd  ParameterKey=CfnuserDpwdReset,ParameterValue=$CfnuserDpwdReset ParameterKey=CfnRoleName,ParameterValue=$CfnRoleName  ParameterKey=CfnGroupA,ParameterValue=$CfnGroupA  ParameterKey=CfnGroupB,ParameterValue=$CfnGroupB ParameterKey=CfnGroupC,ParameterValue=$CfnGroupC  ParameterKey=CfnGroupD,ParameterValue=$CfnuserApwd     --capabilities CAPABILITY_NAMED_IAM 
 
  
 echo "stack update in $StackName"
@@ -48,7 +59,7 @@ echo "stack update in $StackName"
 else
 
 #Launch Cloudformation template
-aws cloudformation create-stack --stack-name $StackName  --template-body file://iam_roles_policy/iam_role_creation.json --parameters  ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix  ParameterKey=Environment,ParameterValue=$Environment ParameterKey=CreateCodeDeployRole,ParameterValue=$CreateCodeDeployRole ParameterKey=CreateECSRole,ParameterValue=$CreateECSRole  ParameterKey=CreateJenkinsRole,ParameterValue=$CreateJenkinsRole  ParameterKey=UserName,ParameterValue=$UserName ParameterKey=RoleName,ParameterValue=$RoleName ParameterKey=GroupName,ParameterValue=$GroupName --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name $StackName  --template-body file://iam_roles_policy/iam_role_creation.json --parameters  ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix  ParameterKey=Environment,ParameterValue=$Environment ParameterKey=Cfnrole,ParameterValue=$Cfnrole ParameterKey=CfnuserA,ParameterValue=$CfnuserA  ParameterKey=CfnuserApwd,ParameterValue=$CfnuserApwd  ParameterKey=CfnuserApwdReset,ParameterValue=$CfnuserApwdReset  ParameterKey=CfnuserB,ParameterValue=$CfnuserB ParameterKey=CfnuserBpwd,ParameterValue=$CfnuserBpwd ParameterKey=CfnuserBpwdReset,ParameterValue=$CfnuserBpwdReset  ParameterKey=CfnuserC,ParameterValue=$CfnuserC  ParameterKey=CfnuserCpwd,ParameterValue=$CfnuserCpwd  ParameterKey=CfnuserCpwdReset,ParameterValue=$CfnuserCpwdReset ParameterKey=CfnuserD,ParameterValue=$CfnuserD ParameterKey=CfnuserDpwd,ParameterValue=$CfnuserDpwd  ParameterKey=CfnuserDpwdReset,ParameterValue=$CfnuserDpwdReset ParameterKey=CfnRoleName,ParameterValue=$CfnRoleName  ParameterKey=CfnGroupA,ParameterValue=$CfnGroupA  ParameterKey=CfnGroupB,ParameterValue=$CfnGroupB ParameterKey=CfnGroupC,ParameterValue=$CfnGroupC  ParameterKey=CfnGroupD,ParameterValue=$CfnuserApwd  --capabilities CAPABILITY_NAMED_IAM
 
 
 #Wait for Template to complete
