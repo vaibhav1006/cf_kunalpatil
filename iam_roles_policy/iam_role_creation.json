@@ -42,7 +42,7 @@
 		"CfnuserApwd"  : { 
 		"NoEcho"                : "true",
 		"Type"				    : "String",
-		"Default"			    : "sogetiadmin@123",
+		"Default"			    : "Sogetiadmin007",
 		"Description"			: "Please provide IAM user name password for group associated with A"	
 		},
 		
@@ -65,7 +65,7 @@
 		"CfnuserBpwd"  : { 
 		"NoEcho"                : "true",
 		"Type"				    : "String",
-		"Default"			    : "sogetideveloper@123",
+		"Default"			    : "Sogetideveloper007",
 		"Description"			: "Please provide IAM user name password for group associated with B"	
 		},
 		
@@ -86,7 +86,7 @@
 		"CfnuserCpwd"  : { 
 		"NoEcho"                : "true",
 		"Type"				    : "String",
-		"Default"			    : "sogetidba@123",
+		"Default"			    : "Sogetidba007",
 		"Description"			: "Please provide IAM user name password for group associated with C"	
 		},
 		
@@ -107,7 +107,7 @@
 		"CfnuserDpwd"  : { 
 		"NoEcho"                : "true",
 		"Type"				    : "String",
-		"Default"			    : "sogetiro@123",
+		"Default"			    : "Sogetiro007",
 		"Description"			: "Please provide IAM user name password for group associated with D"	
 		},
 		
