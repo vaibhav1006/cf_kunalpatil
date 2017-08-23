@@ -26,17 +26,17 @@ CfnuserApwdReset=$6
 CfnuserB=$7
 CfnuserBpwd=$8	
 CfnuserBpwdReset=$9
-CfnuserC=$10
-CfnuserCpwd=$11
-CfnuserCpwdReset=$12
-CfnuserD=$13
-CfnuserDpwd=$14
-CfnuserDpwdReset=$15
-CfnRoleName=$16
-CfnGroupA=$17
-CfnGroupB=$18
-CfnGroupC=$19
-CfnGroupD=$20
+CfnuserC=${10}
+CfnuserCpwd=${11}
+CfnuserCpwdReset=${12}
+CfnuserD=${13}
+CfnuserDpwd=${14}
+CfnuserDpwdReset=${15}
+CfnRoleName=${16}
+CfnGroupA=${17}
+CfnGroupB=${18}
+CfnGroupC=${19}
+CfnGroupD=${20}
 
 
 #Values

@@ -267,7 +267,7 @@
              "Sid": "",
              "Effect": "Allow",
              "Principal": {
-             "AWS": { "Fn::Join" : [ "/", [ "arn:aws:iam::684821578293:user", { "Ref" : "CfnuserA" } ]]},
+             "AWS": { "Fn::Join" : [ "/", [ "arn:aws:iam::713729228264:user", { "Ref" : "CfnuserA" } ]]},
              "Service": "cloudformation.amazonaws.com"
             },
            
