@@ -134,6 +134,7 @@
 														"#!/bin/bash -xe",
 														"echo 'docker,mesos' > /etc/mesos-slave/containerizers",
 														"echo '10mins' > /etc/mesos-slave/executor_registration_timeout",
+														"docker images > /opt/dockerimages",
 														"service marathon restart",
 														"service zookeeper restart",
 														"service mesos-master restart",
