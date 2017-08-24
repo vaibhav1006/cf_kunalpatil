@@ -204,7 +204,7 @@
 							"         --resource EC2Host ",
 							"         --region ", { "Ref" : "AWS::Region" }, "\n",
 						
-							"sleep 20","\n",
+							"sleep 30","\n",
 							"cd /opt/&& curl -X POST -H Content-Type: application/json http://127.0.0.1:8080/v2/apps -d@microbot_v1.json","\n"
 						
                         ]]}},
