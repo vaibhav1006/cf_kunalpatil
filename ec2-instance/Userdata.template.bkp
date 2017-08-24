@@ -134,6 +134,7 @@
 														"#!/bin/bash -xe",
 														"echo 'docker,mesos' > /etc/mesos-slave/containerizers",
 														"echo '10mins' > /etc/mesos-slave/executor_registration_timeout",
+														"docker images > /opt/dockerimages",
 														"service marathon restart",
 														"service zookeeper restart",
 														"service mesos-master restart",
@@ -204,13 +205,8 @@
 							"         --resource EC2Host ",
 							"         --region ", { "Ref" : "AWS::Region" }, "\n",
 						
-							"sleep 1m","\n",
-							"cd /opt/&& curl -X POST -H Content-Type: application/json http://127.0.0.1:8080/v2/apps -d@microbot_v1.json","\n",
-							"# Signal the status from cfn-init\n",
-							"cfn-signal -e $? ",
-							"         --stack ", { "Ref" : "AWS::StackName" },
-							"         --resource EC2Host ",
-							"         --region ", { "Ref" : "AWS::Region" }, "\n"
+							"sleep 30","\n",
+							"cd /opt/&& curl -X POST -H Content-Type: application/json http://127.0.0.1:8080/v2/apps -d@microbot_v1.json","\n"
 						
                         ]]}},
 					"NetworkInterfaces" : [{
@@ -251,14 +247,9 @@
                         }
                     }
                 ]
-                },
-				"CreationPolicy" : {
-							"ResourceSignal" : {
-							"Timeout" : "PT5M"
-						}
+                }	
 	
-					}
-	}
+		}
 	},
 	
 	"Outputs"                  : {
