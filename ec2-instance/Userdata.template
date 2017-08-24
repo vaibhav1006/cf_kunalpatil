@@ -207,7 +207,7 @@
 							"sleep 1m","\n",
 							"cd /opt/&& curl -X POST -H Content-Type: application/json http://127.0.0.1:8080/v2/apps -d@microbot_v1.json","\n",
 							"# Signal the status from cfn-init\n",
-							"cfn-signal -e $? ",
+							" cfn-signal -e $? ",
 							"         --stack ", { "Ref" : "AWS::StackName" },
 							"         --resource EC2Host ",
 							"         --region ", { "Ref" : "AWS::Region" }, "\n"
@@ -262,5 +262,9 @@
 	},
 	
 	"Outputs"                  : {
-    }
+		"URL" : {
+                "Value" : { "Fn::Join" : [ "", ["http://", { "Fn::GetAtt" : ["EC2Host", "PublicIp"] },"/phpmyadmin"]]},
+                "Description" : "Newly created application URL"
+            }
+        }
 }
