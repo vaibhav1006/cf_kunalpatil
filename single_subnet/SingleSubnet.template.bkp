@@ -73,13 +73,23 @@
             "Default" : "10.1.0.0/24",
             "Description" : "Enter CIDR for this Subnet"
         },
-        "InternetGateway":{
-            "Type":"String",
-            "Description":"Enter IntergatewayID"
-            }
+		"InternetGateway":{
+			"Type":"String",
+			"Description":"Enter IntergatewayID"
+			}
     },
     "Mappings"                 : {
     },
+	"Conditions": {
+			"SubnetZone": {
+				"Fn::Equals": [
+					{
+						"Ref": "Zone"
+					},
+						"PE"
+      ]
+    }
+	},
     "Resources"                : {
         "Subnet" : {
             "Type" : "AWS::EC2::Subnet",
@@ -90,16 +100,16 @@
                 "CidrBlock" : {
                     "Ref" : "CIDR"
                 },
-                "AvailabilityZone" :{
-                    "Fn::Join" :[
-                            "",
-                            [
-                                {"Ref":"Region" },
-                                {"Ref":"AZ"}
-
-                            ]
-                        ]
-                    },
+				"AvailabilityZone" :{
+					"Fn::Join" :[
+							"",
+							[
+								{"Ref":"Region" },
+								{"Ref":"AZ"}
+						
+							]
+						]
+					},
                 "Tags"      : [
                     {
                         "Key" : "Name",
@@ -172,7 +182,7 @@
                 ]
             }
         },
-        "Route"           : {
+		"Route"           : {
             "Type" : "AWS::EC2::Route",
             "Condition": "SubnetZone",
             "Properties" : {
@@ -245,8 +255,288 @@
                     "Ref" : "NetworkAcl"
                 }
             }
+        },
+	"acl1": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "PortRange": {
+          "From": "80",
+          "To": "80"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
         }
+      }
     },
+    "acl2": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "110",
+        "PortRange": {
+          "From": "443",
+          "To": "443"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl3": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "120",
+        "PortRange": {
+          "From": "8080",
+          "To": "8080"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl4": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "130",
+        "PortRange": {
+          "From": "22",
+          "To": "22"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl5": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "140",
+        "PortRange": {
+          "From": "5050",
+          "To": "5050"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl6": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "150",
+        "PortRange": {
+          "From": "5051",
+          "To": "5051"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl7": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "160",
+        "PortRange": {
+          "From": "3389",
+          "To": "3389"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl8": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "170",
+        "PortRange": {
+          "From": "1024",
+          "To": "65535"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl9": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "PortRange": {
+          "From": "80",
+          "To": "80"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl10": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "110",
+        "PortRange": {
+          "From": "443",
+          "To": "443"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl11": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "120",
+        "PortRange": {
+          "From": "22",
+          "To": "22"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl12": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "130",
+        "PortRange": {
+          "From": "8080",
+          "To": "8080"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl13": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "140",
+        "PortRange": {
+          "From": "5050",
+          "To": "5050"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl14": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "150",
+        "PortRange": {
+          "From": "5051",
+          "To": "5051"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl15": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "160",
+        "PortRange": {
+          "From": "3389",
+          "To": "3389"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "acl16": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+	  "Condition": "SubnetZone",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "170",
+        "PortRange": {
+          "From": "1024",
+          "To": "65535"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    }
+	},
     "Outputs"                  : {
     }
 }
