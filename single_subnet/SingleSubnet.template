@@ -80,6 +80,16 @@
     },
     "Mappings"                 : {
     },
+	"Conditions": {
+			"SubnetZone": {
+				"Fn::Equals": [
+					{
+						"Ref": "Zone"
+					},
+						"PE"
+      ]
+    }
+	},
     "Resources"                : {
         "Subnet" : {
             "Type" : "AWS::EC2::Subnet",
