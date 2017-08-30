@@ -1,0 +1,526 @@
+{
+    "AWSTemplateFormatVersion" : "2010-09-09",
+    "Description"              : "Cloud Formation stack to create Single Subnet",
+    "Parameters"               : {
+        "CustomerPrefix" : {
+            "Type" : "String",
+            "Default" : "testcust",
+            "Description" : "Enter Customer Prefix"
+        },
+        "Region"         : {
+            "Type" : "String",
+            "Default" : "us-east-1",
+            "Description" : "Region in which VPC will be launched",
+            "AllowedValues" : [
+                "eu-central-1",
+                "eu-west-1",
+                "eu-west-2",
+                "us-east-1",
+                "us-west-1"
+            ]
+        },
+        "Environment"    : {
+            "Type" : "String",
+            "Default" : "dt",
+            "Description" : "Enter Environment (Input Format - d=development, t=test, a=acceptance, p=production, dt=devtest, ap=acceptanceproduction)",
+            "AllowedValues" : [
+                "d",
+                "t",
+                "a",
+                "p",
+                "dt",
+                "ap"
+            ]
+        },
+        "PENACL":{
+            "Type": "CommaDelimitedList",
+            "Description":"Enter PE subnet cidr & NACLID ",
+            "Default": "10.0.48.0/24, 10.0.112.0/24, 10.0.176.0/24"
+        },
+        "MNACL":{
+            "Type": "CommaDelimitedList",
+            "Description":"Enter M subnet cidr & NACLID ",
+            "Default": "10.0.48.0/24, 10.0.112.0/24, 10.0.176.0/24"
+        },
+        "ENACL":{
+            "Type": "CommaDelimitedList",
+            "Description":"Enter External Dev/Prod subnet cidr & NACLID Enter External Test/Acceptance subnet cidr & NACLID",
+            "Default": "10.0.48.0/24, 10.0.112.0/24, 10.0.176.0/24,10.0.176.0/24"
+        },
+        "INACL":{
+            "Type": "CommaDelimitedList",
+            "Description":"Enter Internal Dev/Prod subnet cidr & NACLID Enter Internal Test/Acceptance subnet cidr & NACLID",
+            "Default": "10.0.48.0/24, 10.0.112.0/24, 10.0.176.0/24,10.0.176.0/24"
+        }
+    },
+
+    "Mappings" : {
+
+
+            },
+    "Conditions": {
+    "Environment1" : {
+        "Fn::Or" : [
+            {"Fn::Equals" : ["d", {"Ref" : "Environment"}]},
+            {"Fn::Equals" : ["t", {"Ref" : "Environment"}]},
+            {"Fn::Equals" : ["a", {"Ref" : "Environment"}]},
+            {"Fn::Equals" : ["p", {"Ref" : "Environment"}]},
+            {"Fn::Equals" : ["dt", {"Ref" : "Environment"}]},
+            {"Fn::Equals" : ["ap", {"Ref" : "Environment"}]}
+            ]
+        },
+    "Environment2":{
+        "Fn::Or" : [
+            {"Fn::Equals" : ["dt", {"Ref" : "Environment"}]},
+            {"Fn::Equals" : ["ap", {"Ref" : "Environment"}]}
+      ]
+    }
+    },
+    "Resources"                : {
+    "acll0": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+                "Fn::Select" : [ "1", {"Ref": "PENACL"} ]
+        }
+      }
+    },
+    "acll1": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "PortRange": {
+          "From": "80",
+          "To": "80"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "PENACL"} ]
+        }
+      }
+    },
+    "acll2": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "110",
+        "PortRange": {
+          "From": "443",
+          "To": "443"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "PENACL"} ]
+        }
+      }
+    },
+    "acll3": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": {"Fn::Select" : [ "0", {"Ref": "MNACL"} ]},
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "120",
+        "PortRange": {
+          "From": "22",
+          "To": "22"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "PENACL"} ]
+        }
+      }
+    },
+    "acll4": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "130",
+        "PortRange": {
+          "From": "8080",
+          "To": "8080"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "PENACL"} ]
+        }
+      }
+    },
+    "acl5": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "140",
+        "PortRange": {
+          "From": "5050",
+          "To": "5050"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "PENACL"} ]
+        }
+      }
+    },
+    "acll6": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "150",
+        "PortRange": {
+          "From": "5051",
+          "To": "5051"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "PENACL"} ]
+        }
+      }
+    },
+    "acll7": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": { "Fn::Select" : [ "0", {"Ref": "MNACL"} ]},
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "160",
+        "PortRange": {
+          "From": "3389",
+          "To": "3389"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "PENACL"} ]
+        }
+      }
+    },
+    "acll8": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "170",
+        "PortRange": {
+          "From": "1024",
+          "To": "65535"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "PENACL"} ]
+        }
+      }
+    },
+    "acll9": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "PENACL"} ]
+        }
+      }
+    },
+    "acl20": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "PortRange": {
+          "From": "22",
+          "To": "22"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "MNACL"} ]
+        }
+      }
+    },
+    "acl21": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "110",
+        "PortRange": {
+          "From": "3389",
+          "To": "3389"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "MNACL"} ]
+        }
+      }
+    },
+    "acl22": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "MNACL"} ]
+        }
+      }
+    },
+    "acl23": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment1",
+      "Properties": {
+        "CidrBlock": {"Fn::Select" : [ "0", {"Ref": "PENACL"} ]},
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "ENACL"} ]
+        }
+      }
+    },
+    "acl24": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment1",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "ENACL"} ]
+        }
+      }
+    },
+    "acl25": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment1",
+      "Properties": {
+        "CidrBlock": {"Fn::Select" : [ "0", {"Ref": "MNACL"} ]},
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "110",
+        "PortRange": {
+          "From": "22",
+          "To": "22"
+        },
+        "NetworkAclId": {
+         "Fn::Select" : [ "1", {"Ref": "ENACL"} ]
+        }
+      }
+    },
+    "acl26": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment1",
+      "Properties": {
+        "CidrBlock":{"Fn::Select" : [ "0", {"Ref": "MNACL"} ]},
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "120",
+        "PortRange": {
+          "From": "3389",
+          "To": "3389"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "ENACL"} ]
+        }
+      }
+    },
+    "acl27": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment1",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "INACL"} ]
+        }
+      }
+    },
+    "acl28": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment1",
+      "Properties": {
+        "CidrBlock":{"Fn::Select" : [ "0", {"Ref": "ENACL"} ]},
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "INACL"} ]
+        }
+      }
+    },
+    "acl29": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment1",
+      "Properties": {
+        "CidrBlock":{"Fn::Select" : [ "0", {"Ref": "MNACL"} ]},
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "110",
+        "PortRange": {
+          "From": "22",
+          "To": "22"
+        },
+        "NetworkAclId": {
+         "Fn::Select" : [ "1", {"Ref": "INACL"} ]
+        }
+      }
+    },
+    "acl30": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment1",
+      "Properties": {
+        "CidrBlock":{"Fn::Select" : [ "0", {"Ref": "MNACL"} ]},
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "120",
+        "PortRange": {
+          "From": "3389",
+          "To": "3389"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "1", {"Ref": "INACL"} ]
+        }
+      }
+    },
+    "acl31": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment2",
+      "Properties": {
+        "CidrBlock":{"Fn::Select" : [ "0", {"Ref": "PENACL"}]},
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Fn::Select" : [ "3", {"Ref": "ENACL"} ]
+        }
+      }
+    },
+    "acl32": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment2",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Fn::Select" : [ "3", {"Ref": "ENACL"} ]
+        }
+      }
+    },
+    "acl33": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment2",
+      "Properties": {
+        "CidrBlock":{"Fn::Select" : [ "0", {"Ref": "MNACL"}]},
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "110",
+        "PortRange": {
+          "From": "22",
+          "To": "22"
+        },
+        "NetworkAclId": {
+         "Fn::Select" : [ "3", {"Ref": "ENACL"} ]
+        }
+      }
+    },
+    "acl34": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment2",
+      "Properties": {
+        "CidrBlock":{"Fn::Select" : [ "0", {"Ref": "MNACL"}]},
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "120",
+        "PortRange": {
+          "From": "3389",
+          "To": "3389"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "3", {"Ref": "ENACL"} ]
+        }
+      }
+    },
+    "acl35": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment2",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Fn::Select" : [ "3", {"Ref": "INACL"} ]
+        }
+      }
+    },
+    "acl36": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment2",
+      "Properties": {
+        "CidrBlock":{"Fn::Select" : [ "2", {"Ref": "ENACL"} ]},
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Fn::Select" : [ "3", {"Ref": "INACL"} ]
+        }
+      }
+    },
+    "acl37": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment2",
+      "Properties": {
+        "CidrBlock":{"Fn::Select" : [ "0", {"Ref": "MNACL"} ]},
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "110",
+        "PortRange": {
+          "From": "22",
+          "To": "22"
+        },
+        "NetworkAclId": {
+         "Fn::Select" : [ "3", {"Ref": "INACL"} ]
+        }
+      }
+    },
+    "acl38": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Condition": "Environment2",
+      "Properties": {
+        "CidrBlock":{"Fn::Select" : [ "0", {"Ref": "MNACL"} ] },
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "RuleNumber": "120",
+        "PortRange": {
+          "From": "3389",
+          "To": "3389"
+        },
+        "NetworkAclId": {
+          "Fn::Select" : [ "3", {"Ref": "INACL"} ]
+        }
+      }
+    }
+
+    }
+
+    }
