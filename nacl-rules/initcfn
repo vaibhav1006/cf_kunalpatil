@@ -1,0 +1,63 @@
+unset  AWS_SESSION_TOKEN
+
+temp_role=$(aws sts assume-role --role-arn "arn:aws:iam::713729228264:role/Jenkins_Tool_Access" --role-session-name "client_role_jenkins" --query 'Credentials.[SecretAccessKey,AccessKeyId,SessionToken]' --output text)
+
+# get the aws_secret_access_key
+export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | cut -f1 -d ' ')
+
+# get the aws_secret_access_key
+export AWS_ACCESS_KEY_ID=$(echo $temp_role | cut -f2 -d ' ')
+
+# get the aws_secret_access_key
+export AWS_SESSION_TOKEN=$(echo $temp_role | cut -f3 -d ' ')
+
+env | grep -i AWS_
+
+#Inputs
+CustomerPrefix=$1
+Region=$2
+Environment=$3
+AZ=$4
+
+> PESUBNETCIDR.txt
+> PENACLID.txt
+> MNACLID.txt
+> MSUBNETCIDR.txt
+> ISUBNETCIDR.txt
+> INACLID.txt
+> ESUBNETCIDR.txt
+> ENACLID.txt
+
+#Values
+StackName=$CustomerPrefix"-"$Environment"-"$Region$AZ"-NaclRules-cfs"
+command1="aws cloudformation describe-stacks --stack-name $StackName  --query Stacks[].StackName --output text"
+stack=$($command1)
+#PE Subnet CIDR & NACL 
+PESUBNETCIDR=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=$CustomerPrefix"_"$Environment"_"$Region$AZ"_"PE"-subnet"" --query Subnets[].CidrBlock --output text)
+echo $PESUBNETCIDR > PESUBNETCIDR.txt
+PENACLID=`aws ec2 describe-network-acls --filters "Name=tag:Name,Values=$CustomerPrefix"_"$Environment"_"$Region$AZ"_"PE"-nacl"" --query NetworkAcls[].NetworkAclId --output text` >/dev/null 2>&1
+echo $PENACLID > PENACLID.txt
+MSUBNETCIDR=`aws ec2 describe-subnets --filters "Name=tag:Name,Values=$CustomerPrefix"_"$Environment"_"$Region$AZ"_"M"-subnet"" --query Subnets[].CidrBlock --output text` >/dev/null 2>&1
+echo $MSUBNETCIDR > MSUBNETCIDR.txt
+MNACLID=`aws ec2 describe-network-acls --filters "Name=tag:Name,Values=$CustomerPrefix"_"$Environment"_"$Region$AZ"_"M"-nacl"" --query NetworkAcls[].NetworkAclId --output text` >/dev/null 2>&1
+echo $MNACLID > MNACLID.txt
+ISUBNETCIDR=`aws ec2 describe-subnets --filters "Name=tag:Name,Values=$CustomerPrefix"_"$Environment"_"$Region$AZ"_"I"*"" --query 'Subnets[].[CidrBlock,Tags[?Key==\`Name\`].Value[]]' --output text`>/dev/null 2>&1
+echo $ISUBNETCIDR > ISUBNETCIDR.txt
+INACLID=`aws ec2 describe-network-acls --filters "Name=tag:Name,Values=$CustomerPrefix"_"$Environment"_"$Region$AZ"_"I"*""  --query 'NetworkAcls[].[NetworkAclId,Tags[?Key==\`Name\`].Value[]]' --output text` >/dev/null 2>&1
+echo $INACLID > INACLID.txt
+ESUBNETCIDR=`aws ec2 describe-subnets --filters "Name=tag:Name,Values=$CustomerPrefix"_"$Environment"_"$Region$AZ"_"E"*"" --query 'Subnets[].[CidrBlock,Tags[?Key==\`Name\`].Value[]]' --output text` >/dev/null 2>&1
+echo $ESUBNETCIDR > ESUBNETCIDR.txt
+ENACLID=`aws ec2 describe-network-acls --filters "Name=tag:Name,Values=$CustomerPrefix"_"$Environment"_"$Region$AZ"_"E"*""  --query 'NetworkAcls[].[NetworkAclId,Tags[?Key==\`Name\`].Value[]]' --output text` >/dev/null 
+echo $ENACLID > ENACLID.txt
+
+####condition for create or update stack
+if [ "$stack" = "$StackName" ]; then
+#Launch Cloudformation template
+aws cloudformation create-stack --stack-name $StackName  --template-body file://nacl-rules/Naclrules.json --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=PENACL,ParameterValue="'`cat PESUBNETCIDR.txt`,`cat PENACLID.txt`'" ParameterKey=MNACL,ParameterValue="'`cat MSUBNETCIDR.txt`,`cat MNACLID.txt`'" ParameterKey=ENACL,ParameterValue="'`cat ESUBNETCIDR.txt| xargs -n 2 | grep -E 'ED|EP' | awk '{print $1}'`,`cat ENACLID.txt | xargs -n 2 | grep -E 'ED|EP'|awk '{print $1}'`,`cat ESUBNETCIDR.txt| xargs -n 2 | grep -E 'ET|EA'|awk '{print $1}'`,`cat ENACLID.txt | xargs -n 2 | grep -E 'ET|EA'|awk '{print $1}'`'" ParameterKey=INACL,ParameterValue="'`cat ISUBNETCIDR.txt| xargs -n 2 | grep -E 'ID|IP' | awk '{print $1}'`,`cat INACLID.txt | xargs -n 2 | grep -E 'ID|IP'|awk '{print $1}'`,`cat ISUBNETCIDR.txt| xargs -n 2 | grep -E 'IT|IA'|awk '{print $1}'`\,`cat INACLID.txt | xargs -n 2 | grep -E 'IT|IA'|awk '{print $1}'`'" --region $Region
+echo " changes in stack $StackName"
+else
+aws cloudformation create-stack --stack-name $StackName  --template-body file://nacl-rules/Naclrules.json --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix ParameterKey=Region,ParameterValue=$Region ParameterKey=Environment,ParameterValue=$Environment ParameterKey=PENACL,ParameterValue="'`cat PESUBNETCIDR.txt`,`cat PENACLID.txt`'" ParameterKey=MNACL,ParameterValue="'`cat MSUBNETCIDR.txt`,`cat MNACLID.txt`'" ParameterKey=ENACL,ParameterValue="'`cat ESUBNETCIDR.txt| xargs -n 2 | grep -E 'ED|EP' | awk '{print $1}'`,`cat ENACLID.txt | xargs -n 2 | grep -E 'ED|EP'|awk '{print $1}'`,`cat ESUBNETCIDR.txt| xargs -n 2 | grep -E 'ET|EA'|awk '{print $1}'`,`cat ENACLID.txt | xargs -n 2 | grep -E 'ET|EA'|awk '{print $1}'`'" ParameterKey=INACL,ParameterValue="'`cat ISUBNETCIDR.txt| xargs -n 2 | grep -E 'ID|IP' | awk '{print $1}'`,`cat INACLID.txt | xargs -n 2 | grep -E 'ID|IP'|awk '{print $1}'`,`cat ISUBNETCIDR.txt| xargs -n 2 | grep -E 'IT|IA'|awk '{print $1}'`\,`cat INACLID.txt | xargs -n 2 | grep -E 'IT|IA'|awk '{print $1}'`'" --region $Region
+
+#Wait for Template to complete
+aws cloudformation wait stack-create-complete --stack-name $StackName --region $Region
+fi

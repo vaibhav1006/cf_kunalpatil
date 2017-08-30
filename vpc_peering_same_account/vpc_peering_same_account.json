@@ -1,0 +1,129 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+
+        "Description": "Creates a VPC that and then creates a peering connection with an existing VPC that you specify.",
+
+
+    "Parameters": {
+
+         "CustomerPrefix": {
+         "Type": "String",
+         "Default": "testcust",
+         "Description": "Enter Customer Prefix"
+        },
+
+        "Environment": {
+        "Type": "String",
+        "Default": "dt",
+        "Description": "Enter Environment (Input Format - d=development, t=test, a=acceptance, p=production, dt=devtest, ap=acceptanceproduction)",
+        "AllowedValues": [
+                "d",
+                "t",
+                "a",
+                "p",
+                "dt",
+                "ap"
+            ]
+        },
+
+         "Region": {
+         "Type": "String",
+         "Default": "us-east-1",
+         "Description": "Region in which VPC will be launched",
+         "AllowedValues": [
+          "eu-central-1",
+          "eu-west-1",
+          "eu-west-2",
+          "us-east-1",
+          "us-west-1",
+          "us-west-2"
+            ]
+        },
+
+
+
+        "VPCA": {
+        "Description": "VPC ID of VPC A",
+        "Type": "String"
+        },
+
+        "VPCACIDR": {
+        "Description": "VPCCIDR of VPC A",
+        "Type": "String",
+        "Default": "192.168.0.0/16"
+        },
+
+
+        "VPCARouteTableID": {
+        "Description": "Route Table ID of VPC A",
+        "Type": "String"
+        },
+
+
+        "VPCB": {
+        "Description": "VPC ID of VPC B",
+        "Type": "String"
+        },
+
+
+        "VPCBCIDR": {
+        "Description": "VPCCIDR of VPC B",
+        "Type": "String",
+        "Default": "10.0.0.0/16"
+        },
+
+
+                "VPCBRouteTableID": {
+        "Description": "Route Table ID of VPC B",
+        "Type": "String"
+        }
+
+    },
+
+
+    "Mappings": {
+
+
+        },
+
+
+        "Resources": {
+
+         "myVPCPeeringConnection": {
+         "Type": "AWS::EC2::VPCPeeringConnection",
+         "Properties": {
+         "VpcId": {"Ref": "VPCA"},
+         "PeerVpcId": {"Ref": "VPCB"}
+        }
+    },
+
+         "PeeringRoute1": {
+         "Type": "AWS::EC2::Route",
+         "Properties": {
+         "DestinationCidrBlock": { "Ref" : "VPCBCIDR" },
+         "RouteTableId": { "Ref" : "VPCARouteTableID" },
+         "VpcPeeringConnectionId": { "Ref" : "myVPCPeeringConnection" }
+        }
+    },
+
+
+
+         "PeeringRoute2": {
+         "Type": "AWS::EC2::Route",
+         "Properties": {
+         "DestinationCidrBlock": { "Ref" : "VPCACIDR" },
+         "RouteTableId": { "Ref" : "VPCBRouteTableID" },
+         "VpcPeeringConnectionId": { "Ref" : "myVPCPeeringConnection" }
+        }
+          }
+        },
+
+         "Outputs": {
+         
+         "VPCPeeringConnectionId": {
+         "Value": {
+         "Ref": "myVPCPeeringConnection"
+        }
+      }
+   }
+}

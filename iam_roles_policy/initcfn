@@ -1,0 +1,68 @@
+#!/bin/bash 
+
+unset  AWS_SESSION_TOKEN
+
+temp_role=$(aws sts assume-role --role-arn "arn:aws:iam::713729228264:role/Jenkins_Tool_Access" --role-session-name "client_role_jenkins" --query 'Credentials.[SecretAccessKey,AccessKeyId,SessionToken]' --output text)
+ 
+# get the aws_secret_access_key
+export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | cut -f1 -d ' ')
+ 
+# get the aws_secret_access_key
+export AWS_ACCESS_KEY_ID=$(echo $temp_role | cut -f2 -d ' ')
+ 
+# get the aws_secret_access_key
+export AWS_SESSION_TOKEN=$(echo $temp_role | cut -f3 -d ' ')
+
+env | grep -i AWS_
+
+
+#Inputs
+CustomerPrefix=$1
+Environment=$2
+Cfnrole=$3
+CfnuserA=$4
+CfnuserApwd=$5
+CfnuserApwdReset=$6
+CfnuserB=$7
+CfnuserBpwd=$8	
+CfnuserBpwdReset=$9
+CfnuserC=${10}
+CfnuserCpwd=${11}
+CfnuserCpwdReset=${12}
+CfnuserD=${13}
+CfnuserDpwd=${14}
+CfnuserDpwdReset=${15}
+CfnRoleName=${16}
+CfnGroupA=${17}
+CfnGroupB=${18}
+CfnGroupC=${19}
+CfnGroupD=${20}
+
+
+#Values
+
+StackName=$CustomerPrefix"-"$Environment"-security-cfs"
+
+command1="aws cloudformation describe-stacks --stack-name $StackName   --query Stacks[].StackName --output text"
+stack=$($command1)
+
+
+####condition for create or update stack 
+if [ "$stack" = "$StackName" ]; then
+
+#update cloudformation template
+aws cloudformation update-stack --stack-name $StackName  --template-body file://iam_roles_policy/iam_role_creation.json --parameters ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix  ParameterKey=Environment,ParameterValue=$Environment ParameterKey=Cfnrole,ParameterValue=$Cfnrole ParameterKey=CfnuserA,ParameterValue=$CfnuserA  ParameterKey=CfnuserApwd,ParameterValue=$CfnuserApwd  ParameterKey=CfnuserApwdReset,ParameterValue=$CfnuserApwdReset  ParameterKey=CfnuserB,ParameterValue=$CfnuserB ParameterKey=CfnuserBpwd,ParameterValue=$CfnuserBpwd ParameterKey=CfnuserBpwdReset,ParameterValue=$CfnuserBpwdReset  ParameterKey=CfnuserC,ParameterValue=$CfnuserC  ParameterKey=CfnuserCpwd,ParameterValue=$CfnuserCpwd  ParameterKey=CfnuserCpwdReset,ParameterValue=$CfnuserCpwdReset ParameterKey=CfnuserD,ParameterValue=$CfnuserD ParameterKey=CfnuserDpwd,ParameterValue=$CfnuserDpwd  ParameterKey=CfnuserDpwdReset,ParameterValue=$CfnuserDpwdReset ParameterKey=CfnRoleName,ParameterValue=$CfnRoleName  ParameterKey=CfnGroupA,ParameterValue=$CfnGroupA  ParameterKey=CfnGroupB,ParameterValue=$CfnGroupB ParameterKey=CfnGroupC,ParameterValue=$CfnGroupC  ParameterKey=CfnGroupD,ParameterValue=$CfnuserApwd     --capabilities CAPABILITY_NAMED_IAM 
+
+ 
+echo "stack update in $StackName"
+
+else
+
+#Launch Cloudformation template
+aws cloudformation create-stack --stack-name $StackName  --template-body file://iam_roles_policy/iam_role_creation.json --parameters  ParameterKey=CustomerPrefix,ParameterValue=$CustomerPrefix  ParameterKey=Environment,ParameterValue=$Environment ParameterKey=Cfnrole,ParameterValue=$Cfnrole ParameterKey=CfnuserA,ParameterValue=$CfnuserA  ParameterKey=CfnuserApwd,ParameterValue=$CfnuserApwd  ParameterKey=CfnuserApwdReset,ParameterValue=$CfnuserApwdReset  ParameterKey=CfnuserB,ParameterValue=$CfnuserB ParameterKey=CfnuserBpwd,ParameterValue=$CfnuserBpwd ParameterKey=CfnuserBpwdReset,ParameterValue=$CfnuserBpwdReset  ParameterKey=CfnuserC,ParameterValue=$CfnuserC  ParameterKey=CfnuserCpwd,ParameterValue=$CfnuserCpwd  ParameterKey=CfnuserCpwdReset,ParameterValue=$CfnuserCpwdReset ParameterKey=CfnuserD,ParameterValue=$CfnuserD ParameterKey=CfnuserDpwd,ParameterValue=$CfnuserDpwd  ParameterKey=CfnuserDpwdReset,ParameterValue=$CfnuserDpwdReset ParameterKey=CfnRoleName,ParameterValue=$CfnRoleName  ParameterKey=CfnGroupA,ParameterValue=$CfnGroupA  ParameterKey=CfnGroupB,ParameterValue=$CfnGroupB ParameterKey=CfnGroupC,ParameterValue=$CfnGroupC  ParameterKey=CfnGroupD,ParameterValue=$CfnuserApwd  --capabilities CAPABILITY_NAMED_IAM
+
+
+#Wait for Template to complete
+aws cloudformation wait stack-create-complete --stack-name $StackName 
+
+fi
